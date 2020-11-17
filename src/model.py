@@ -33,7 +33,7 @@ class Model:
         self.stm = check_pickle_open(path, '')
         # 学習済みファイル
         path = self.model_path + self.fit_name
-        self.fit = check_pickle_open(path, '学習済みデータがないので、グラフ表示・予測前に学習が必要です')
+        self.fit = check_pickle_open(path, '')
     
     # データ読み込み、整形
     def load_dataframe(self):
@@ -83,9 +83,11 @@ class Model:
     
     # 予測結果表示
     def show_predict(self):
-        if self.fit is None:
+        if self.results_dict is None:
             print('先に学習してください')
             return
+        print('予測したイベント')
+        print(self.next_event)
         #結果を抽出
         alpha_pred = self.results_dict['result']['alpha_pred']
         mean = alpha_pred['mean']
@@ -178,6 +180,7 @@ class Model:
                     ax.plot(X, self.df['point'], label='observed')
                 if key == 'alpha_pred':
                     plt.legend(loc='upper left', borderaxespad=0)
+                ax.set_title(key)
                 plt.show()
         except ValueError:
             print('データフレームが変わったので、再度学習してください')

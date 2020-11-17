@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # 以下、自作
-from utils import select_method, input_str, input_date, input_natural_number, input_plus_number, input_yes_no, input_event_data
+from utils import select_method, input_yes_no, input_event_data
 
 # イベントデータを管理するクラス
 class Data:
