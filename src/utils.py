@@ -1,7 +1,16 @@
 import datetime
 import pickle
 
-# 選択肢
+# データ全般のインプットに使う
+def input_data(print_str):
+    quit_str = 'q'
+    data = input(print_str+ 'を入力してください。(' + quit_str + 'でキャンセル)')
+    if data == quit_str:
+        print('キャンセルしました')
+        return
+    return data
+
+# メソッドの選択に使う
 def select_method(select_dict):
     """
     select_dictの中身
@@ -9,31 +18,20 @@ def select_method(select_dict):
         name:   表示する文字
         method: 実行するメソッド
     """
-    quit_str = 'q'
     while True:
         print('モードを選んでください')
         for key, value in select_dict.items():
             print(key, ':', value['name'])
-        mode_num = input('数字を入力。("' + quit_str + '"で戻る)')
+        mode_num = input_data('数字')
+        # Noneが帰ってきたら終了
+        if mode_num is None:
+            return
         try:
-            if mode_num == quit_str:
-                print('戻ります')
-                break
-            else:
-                print(select_dict[mode_num]['name'])
-                select_dict[mode_num]['method']()
-                print('')
+            print(select_dict[mode_num]['name'])
+            select_dict[mode_num]['method']()
+            print('')
         except KeyError:
             print('正しい数字を入力してください')
-
-# データ全般のインプットに使う
-def input_data(print_str):
-    quit_str = 'q'
-    data = input(print_str+ 'を入力してください。(' + quit_str + 'でキャンセル)')
-    if data == quit_str:
-        print('キャンセルしました')
-        return None
-    return data
 
 # 文字列のインプットに使う
 def input_str():
