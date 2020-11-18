@@ -35,7 +35,7 @@ class Model:
         path = self.model_path + self.fit_name
         self.fit = check_pickle_open(path, '')
     
-    # データ読み込み、整形
+    # データフレーム読み込み、整形
     def load_dataframe(self):
         self.df = pd.read_csv(self.data_path + self.dataframe_file_name)
         self.df['date'] = pd.to_datetime(self.df['date']).dt.date
@@ -143,13 +143,15 @@ class Model:
         with open(self.model_path + self.model_name, mode="wb") as f:
             pickle.dump(self.stm, f)
     
+    # 予測結果を保存
     def save_predict_result(self):
-        #結果を抽出
         # x軸
         X = self.df.index
         X_pred = self.df.index.tolist()
         X_pred.append(self.next_event['date'])
+        # 予測結果
         ms = self.fit.extract() 
+        # 辞書型で保存
         self.results_dict = {
             'X': X,
             'X_pred': X_pred,
@@ -160,7 +162,8 @@ class Model:
                       'p95':  np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, 95), axis=0)),
                       }
             for key in ['alpha_pred', 'mu_pred', 'b_len_pred']
-            }}
+            }
+        }
         # 保存
         with open(self.data_path + self.result_file_name, mode="wb") as f:
             pickle.dump(self.results_dict, f)

@@ -1,5 +1,3 @@
-
-# 以下、自作
 from utils import select_method
 from data import Data
 from model import Model
