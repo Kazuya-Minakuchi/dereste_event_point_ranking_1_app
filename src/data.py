@@ -91,9 +91,6 @@ class Data:
             # 保存
             self.save_dataframe()
             print('削除しました')
-    
-    def get_dataframe(self):
-        return self.df
 
 if __name__ == '__main__':
     data = Data()
