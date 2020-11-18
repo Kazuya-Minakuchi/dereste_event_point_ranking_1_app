@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # 以下、自作
-from utils import select_method, input_yes_no, input_event_data
+from utils import select_method, input_yes_no, input_event_data, input_date
 
 # イベントデータを管理するクラス
 class Data:
@@ -47,13 +47,11 @@ class Data:
     # グラフ表示
     def show_graph(self):
         # ポイント
-        print('point')
-        self.df['point'].plot()
-        plt.show()
-        # 長さ
-        print('length(h)')
-        self.df['length(h)'].plot()
-        plt.show()
+        for key in ['point', 'length(h)']:
+            print(key)
+            self.df[key].plot()
+            plt.title(key)
+            plt.show()
     
     # データ追加
     def add_data(self):
