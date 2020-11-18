@@ -109,7 +109,7 @@ def input_dict(input_list):
     """
     # カラムごとに取得し、辞書型で返す
     data_dict = {}
-    for i, input_data in enumerate(input_list):
+    for input_data in input_list:
         print(input_data['name'], '入力')
         data = input_data['function']()
         # Noneが帰ってきたらキャンセル
