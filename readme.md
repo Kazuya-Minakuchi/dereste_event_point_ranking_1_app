@@ -22,6 +22,9 @@
 ## 注意
 
 * 使用前にPystanをインストールする必要あり
+  * pystanインストール：`pip install pystan`
+  * `pystan - Unable to find vcvarsall.bat`というエラーが出たら
+    * [ココ](http://y-okamoto-psy1949.la.coocan.jp/Python/PyStanWinLinux/)の通り、Visual StadioのC++をインストールする
 
 ## ディレクトリ構成
 
