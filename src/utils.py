@@ -6,8 +6,8 @@ def select_method(select_dict):
     """
     select_dictの中身
     key:    数字(文字列)
-    name:   表示する文字
-    method: 実行するメソッド
+        name:   表示する文字
+        method: 実行するメソッド
     """
     quit_str = 'q'
     while True:
