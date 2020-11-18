@@ -4,40 +4,39 @@ import pickle
 import matplotlib.pyplot as plt
 import pystan
 
-# 以下、自作
-from utils import select_method, predict_input_event_data, check_pickle_open
+from utils import select_method, check_pickle_open, input_date, input_plus_number, input_dict
 
+# 予測したいイベントデータのインプットに使う
+def predict_input_event_data():
+    # カラム名と使う関数
+    input_list = [
+            {'name': 'date',      'function': input_date},
+            {'name': 'length(h)', 'function': input_plus_number},
+    ]
+    return input_dict(input_list)
+
+# 予測モデルを管理するクラス
 class Model:
     def __init__(self):
         # 読み込み設定
         self.data_path =  '../data/'
-        self.dataframe_file_name = 'event_data.csv'
-        self.next_event_file_name = 'next_event.pickle'
+        self.dataframe_file_path  = self.data_path + 'event_data.csv'
+        self.next_event_file_path = self.data_path + 'next_event.pickle'
+        self.result_file_path     = self.data_path + 'predict_result.pickle'
         self.model_code = model_code
         self.model_path = '../models/'
-        self.model_name = 'stan_model.pickle'
-        self.fit_name =   'stan_fit.pickle'
-        self.result_file_name = 'predict_result.pickle'
+        self.stan_model_path = self.model_path + 'stan_model.pickle'
+        self.stan_fit_path   = self.model_path + 'stan_fit.pickle'
         # データ読み込み
-        # データフレーム
         self.load_dataframe()
-        # 次回イベントデータ（前回予測時に入力）
-        path = self.data_path + self.next_event_file_name
-        self.next_event = check_pickle_open(path, '')
-        # 予測結果（前回予測時）
-        path = self.data_path + self.result_file_name
-        self.results_dict = check_pickle_open(path, '')
-
-        # コンパイルファイル
-        path = self.model_path + self.model_name
-        self.stm = check_pickle_open(path, '')
-        # 学習済みファイル
-        path = self.model_path + self.fit_name
-        self.fit = check_pickle_open(path, '')
+        self.next_event = check_pickle_open(self.next_event_file_path, '')
+        self.results_dict = check_pickle_open(self.result_file_path, '')
+        self.stm = check_pickle_open(self.stan_model_path, '')
+        self.fit = check_pickle_open(self.stan_fit_path, '')
     
     # データフレーム読み込み、整形
     def load_dataframe(self):
-        self.df = pd.read_csv(self.data_path + self.dataframe_file_name)
+        self.df = pd.read_csv(self.dataframe_file_path)
         self.df['date'] = pd.to_datetime(self.df['date']).dt.date
         self.df.set_index('date', inplace=True)
     
@@ -63,7 +62,7 @@ class Model:
         print('予測したい(次回の)イベントの情報を入力してください')
         self.next_event = predict_input_event_data()
         # ファイル保存
-        with open(self.data_path + self.next_event_file_name, mode="wb") as f:
+        with open(self.next_event_file_path, mode="wb") as f:
             pickle.dump(self.next_event, f)
             
         self.learning()
@@ -132,7 +131,7 @@ class Model:
                 verbose=False)
         print('学習完了')
         # ファイル保存
-        with open(self.model_path + self.fit_name, mode="wb") as f:
+        with open(self.stan_fit_path, mode="wb") as f:
             pickle.dump(self.fit, f)
         print('学習ファイル保存')
     
@@ -140,7 +139,7 @@ class Model:
     def compile_stan(self):
         self.stm = pystan.StanModel(model_code=self.model_code)
         # ファイル保存
-        with open(self.model_path + self.model_name, mode="wb") as f:
+        with open(self.stan_model_path, mode="wb") as f:
             pickle.dump(self.stm, f)
     
     # 予測結果を保存
@@ -165,7 +164,7 @@ class Model:
             }
         }
         # 保存
-        with open(self.data_path + self.result_file_name, mode="wb") as f:
+        with open(self.result_file_path, mode="wb") as f:
             pickle.dump(self.results_dict, f)
     
     def show_graph(self):

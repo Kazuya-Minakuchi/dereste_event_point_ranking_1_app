@@ -17,7 +17,7 @@ def select_method(select_dict):
         mode_num = input('数字を入力。("' + quit_str + '"で戻る)')
         try:
             if mode_num == quit_str:
-                print('')
+                print('戻ります')
                 break
             else:
                 print(select_dict[mode_num]['name'])
@@ -28,13 +28,12 @@ def select_method(select_dict):
 
 # データ全般のインプットに使う
 def input_data(print_str):
-    # イベント名入力
-    data = input(print_str+ 'を入力してください。(qでキャンセル)')
-    if data == 'q':
+    quit_str = 'q'
+    data = input(print_str+ 'を入力してください。(' + quit_str + 'でキャンセル)')
+    if data == quit_str:
         print('キャンセルしました')
         return None
-    else:
-        return data
+    return data
 
 # 文字列のインプットに使う
 def input_str():
@@ -46,7 +45,7 @@ def input_date():
     while True:
         try:
             date_str = input_data('日付(yyyy-mm-dd形式)')
-            # Noneが帰ってきたらキャンセル
+            # Noneが帰ってきたら終了
             if date_str is None:
                 return
             # 入力形式チェック
@@ -61,15 +60,14 @@ def input_natural_number():
     while True:
         try:
             point = input_data('正の整数')
-            # Noneが帰ってきたらキャンセル
+            # Noneが帰ってきたら終了
             if point is None:
                 return
             point = int(point)
-            # 0以下の場合、やり直し
-            if point <= 0:
-                print('正の整数を入力してください')
-            else:
+            # 自然数の場合、返す
+            if point > 0:
                 return point
+            print('正の整数を入力してください')
         except ValueError:
             print('入力値が誤っています')
 
@@ -78,15 +76,14 @@ def input_plus_number():
     while True:
         try:
             length = input_data('正の数')
-            # Noneが帰ってきたらキャンセル
+            # Noneが帰ってきたら終了
             if length is None:
                 return
             length = float(length)
-            # 0以下の場合、やり直し
-            if length <= 0:
-                print('正の数を入力してください')
-            else:
+            # 正の数の場合、返す
+            if length > 0:
                 return length
+            print('正の数を入力してください')
         except ValueError:
             print('入力値が誤っています')
 
@@ -101,38 +98,15 @@ def input_yes_no():
             return True
         elif data == 'N':
             return False
-        else:
-            print('入力値が誤っています')
+        print('入力値が誤っています')
 
-# イベントデータのインプットに使う
-def input_event_data():
-    # カラム名と使う関数
-    input_list = [
-            {'name': 'date',       'function': input_date},
-            {'name': 'event_name', 'function': input_str},
-            {'name': 'point',      'function': input_natural_number},
-            {'name': 'length(h)',  'function': input_plus_number},
-    ]
-    
-    # カラムごとに取得し、辞書型で返す
-    data_dict = {}
-    for i, input_data in enumerate(input_list):
-        print(input_data['name'], '入力')
-        data = input_data['function']()
-        # Noneが帰ってきたらキャンセル
-        if data is None:
-            return
-        data_dict[input_data['name']] = data
-    return data_dict
-
-# 予測したいイベントデータのインプットに使う
-def predict_input_event_data():
-    # カラム名と使う関数
-    input_list = [
-            {'name': 'date',       'function': input_date},
-            {'name': 'length(h)',  'function': input_plus_number},
-    ]
-    
+# インプットから辞書型データつくる
+def input_dict(input_list):
+    """
+    input_listは↓のdictのリスト
+    name:     カラム名
+    function: データ入力に使う関数
+    """
     # カラムごとに取得し、辞書型で返す
     data_dict = {}
     for i, input_data in enumerate(input_list):

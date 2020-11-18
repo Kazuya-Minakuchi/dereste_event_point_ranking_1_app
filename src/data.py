@@ -1,14 +1,23 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# 以下、自作
-from utils import select_method, input_yes_no, input_event_data, input_date
+from utils import select_method, input_yes_no, input_date, input_str, input_natural_number, input_plus_number, input_dict
+
+# イベントデータのインプットに使う
+def input_event_data():
+    # カラム名と使う関数
+    input_list = [
+            {'name': 'date',       'function': input_date},
+            {'name': 'event_name', 'function': input_str},
+            {'name': 'point',      'function': input_natural_number},
+            {'name': 'length(h)',  'function': input_plus_number},
+    ]
+    return input_dict(input_list)
 
 # イベントデータを管理するクラス
 class Data:
     def __init__(self):
         self.data_path = '../data/event_data.csv'
-        # データ読み込み
         self.load_dataframe()
     
     # データ読み込み、整形
@@ -21,8 +30,8 @@ class Data:
     def save_dataframe(self):
         self.df.to_csv(self.data_path)
     
+    # 選択肢
     def select_method(self):
-        # 選択肢
         self.selection = {
                 '1': {'name': 'データフレーム表示',
                       'method': self.show_dataframe,
@@ -37,7 +46,6 @@ class Data:
                       'method': self.delete_data,
                       },
         }
-        # 選ぶ
         select_method(self.selection)
     
     # データフレーム表示
@@ -46,7 +54,6 @@ class Data:
     
     # グラフ表示
     def show_graph(self):
-        # ポイント
         for key in ['point', 'length(h)']:
             print(key)
             self.df[key].plot()
@@ -55,15 +62,12 @@ class Data:
     
     # データ追加
     def add_data(self):
-        # 入力
         data_dict = input_event_data()
         if data_dict is None:
             return
-        # データフレームに変換
         df_add = pd.DataFrame(data_dict, index=['0']).set_index('date')
         # 既存のデータフレームに追加
         self.df = pd.concat([self.df, df_add], axis=0).sort_index()
-        # 保存
         self.save_dataframe()
     
     # データ削除
