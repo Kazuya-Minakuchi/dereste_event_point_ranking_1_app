@@ -1,4 +1,6 @@
-*.pickle
+/models/*.pickle
+/data/*.pickle
+/notebooks/data/c*.pickle
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
