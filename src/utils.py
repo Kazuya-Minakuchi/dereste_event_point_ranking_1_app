@@ -4,9 +4,9 @@ import pickle
 # データ全般のインプットに使う
 def input_data(print_str):
     quit_str = 'q'
-    data = input(print_str+ 'を入力してください。(' + quit_str + 'でキャンセル)')
+    data = input(print_str+ 'を入力してください。(' + quit_str + 'で戻る)')
     if data == quit_str:
-        print('キャンセルしました')
+        print('戻ります')
         return
     return data
 
