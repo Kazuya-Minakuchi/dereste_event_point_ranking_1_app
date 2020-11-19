@@ -117,7 +117,7 @@ class Model:
             'pred_len' : [self.next_event['length(h)']]
         }
         # パラメータ設定
-        n_itr = 5000
+        n_itr = 4000
         n_warmup = n_itr - 1000
         chains = 3
         print('学習開始')
@@ -188,23 +188,21 @@ class Model:
             print('データフレームが変わったので、再度学習してください')
 
 # Stanコード
-# ローカル線形トレンド+時系変数モデル
+# ローカルトレンド+時系変数モデル
 model_code =  """
 data {
-  int T;         // データ取得期間の長さ
-  vector[T] len; // イベント期間(h)
-  vector[T] y;   // 観測値
-  int pred_term; // 予測期間の長さ
+  int       T;         // データ取得期間の長さ
+  vector[T] len;       // イベント期間(h)
+  vector[T] y;         // 観測値
+  int       pred_term; // 予測期間の長さ
   vector[pred_term] pred_len; // 予測イベントのイベント期間(h)
 }
 parameters {
-  vector[T] b_len;   // lenの係数
-  vector[T] mu;      // 水準+ドリフト成分の推定値
-  vector[T] delta;   // ドリフト成分の推定値
-  real<lower=0> s_w; // 水準成分の変動の大きさを表す標準偏差
-  real<lower=0> s_z; // ドリフト成分の変動の大きさを表す標準偏差
-  real<lower=0> s_v; // 観測誤差の標準偏差
-  real<lower=0> s_t; // lenの係数の変化を表す標準偏差
+  vector[T]     b_len; // lenの係数
+  vector[T]     mu;    // 水準成分の推定値
+  real<lower=0> s_t;   // ev_lenの係数の変化を表す標準偏差
+  real<lower=0> s_w;   // 水準成分の変動の大きさを表す標準偏差
+  real<lower=0> s_v;   // 観測誤差の標準偏差
 }
 transformed parameters {
   vector[T] alpha;
@@ -214,24 +212,20 @@ transformed parameters {
 }
 model {
   for(i in 2:T){
-    mu[i] ~ normal(mu[i-1] + delta[i-1], s_w);
-    delta[i] ~ normal(delta[i-1], s_z);
+    mu[i] ~ normal(mu[i-1], s_w);
     b_len[i] ~ normal(b_len[i-1], s_t);
     y[i] ~ normal(alpha[i], s_v);
   }
 }
 generated quantities{
-  vector[T + pred_term] delta_pred;
   vector[T + pred_term] mu_pred;
   vector[T + pred_term] b_len_pred;   // lenの係数
   vector[T + pred_term] alpha_pred;
-  delta_pred[1:T] = delta;
   mu_pred[1:T] = mu;
   b_len_pred[1:T] = b_len;
   alpha_pred[1:T] = alpha;
   for(i in 1:pred_term){
-    delta_pred[T+i] = normal_rng(delta_pred[T+i-1], s_z);
-    mu_pred[T+i] = normal_rng(mu_pred[T+i-1]+delta[T+i-1], s_w);
+    mu_pred[T+i] = normal_rng(mu_pred[T+i-1], s_w);
     b_len_pred[T+i] = normal_rng(b_len_pred[T+i-1], s_t);
     alpha_pred[T+i] = mu_pred[T+i] + b_len_pred[T+i] * pred_len[i];
   }
