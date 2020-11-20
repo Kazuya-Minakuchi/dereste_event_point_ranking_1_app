@@ -8,7 +8,7 @@ from data import Data
 from utils import select_method, check_pickle_open, input_date, input_plus_number, input_dict
 
 # 予測したいイベントデータのインプットに使う
-def predict_input_event_data():
+def input_predict_event_data():
     # カラム名と使う関数
     input_list = [
             {'name': 'date',      'function': input_date},
@@ -64,7 +64,7 @@ class Model:
     def learn_predict(self):
         # データ準備
         print('予測したい(次回の)イベントの情報を入力してください')
-        next_event = predict_input_event_data()
+        next_event = input_predict_event_data()
         if next_event is None:
             return
         df = self.data.get_dataframe()
