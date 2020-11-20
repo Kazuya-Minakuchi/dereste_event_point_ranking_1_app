@@ -19,6 +19,7 @@ def predict_input_event_data():
 # 予測モデルを管理するクラス
 class Model:
     def __init__(self, file_info):
+        # stanコード
         self.model_code = model_code
         # 予測値表示設定
         self.value_interval_estimations = [50, 90] # 信頼区間
@@ -160,21 +161,20 @@ class Model:
         X = df.index
         X_pred = X.tolist()
         X_pred.append(self.learned_data['next_event']['date'])
-        
+        # 信頼区間
+        p_low  = 50 - self.graph_interval_estimation / 2
+        p_high = 50 + self.graph_interval_estimation / 2
         # 予測結果取り出し
         ms = self.fit.extract()
-        # 表示
+        # プロット
         for key in self.plot_params:
             print(key)
             # 予測結果
             mean = ms[key].mean(axis=0)
-            p_low  = 50 - self.graph_interval_estimation / 2
-            p_high = 50 + self.graph_interval_estimation / 2
             pred_low  = np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, p_low), axis=0))
             pred_high = np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, p_high), axis=0))
             # プロット
-            fig = plt.figure()
-            ax = fig.add_subplot(111)
+            fig, ax = plt.subplots()
             ax.plot(X_pred, mean, label='predicted', c='red')
             plt.fill_between(X_pred, pred_low, pred_high, color='red', alpha=0.2)
             # alpha, muは実測値も並べる
