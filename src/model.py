@@ -22,15 +22,15 @@ class Model:
         self.model_code = model_code
         # データフレーム操作インスタンス
         self.data = Data(file_info)
-        # 読み込みファイル設定
+        # 読み込みファイルのパス
         paths = file_info['paths']
-        self.path_learn_result = paths['data']  + 'stan_predict_result.pickle'
-        self.path_stan_model   = paths['model'] + 'stan_model.pickle'
-        self.path_stan_fit     = paths['model'] + 'stan_fit.pickle'
-        # 読み込み
-        self.learn_result = check_pickle_open(self.path_learn_result, '')
-        self.stm          = check_pickle_open(self.path_stan_model, '')
-        self.fit          = check_pickle_open(self.path_stan_fit, '')
+        self.path_learn_info = paths['data']  + 'stan_learn_info.pickle'
+        self.path_stan_model = paths['model'] + 'stan_model.pickle'
+        self.path_stan_fit   = paths['model'] + 'stan_fit.pickle'
+        # ファイル読み込み
+        self.learn_info = check_pickle_open(self.path_learn_info, '')
+        self.stm        = check_pickle_open(self.path_stan_model, '')
+        self.fit        = check_pickle_open(self.path_stan_fit, '')
     
     # メソッド選択
     def select_method(self):
@@ -75,14 +75,16 @@ class Model:
     
     # 予測結果表示
     def show_predict(self):
-        if self.learn_result is None:
+        if self.learn_info is None:
             print('先に学習してください')
             return
         print('予測したイベント')
-        print(self.learn_result['next_event'])
+        print(self.learn_info['next_event'])
         
         # 予測結果を抽出
-        self.show_predict_value()
+        # 区間推定したいパーセントリスト
+        interval_estimations = [50, 90]
+        self.show_predict_value(interval_estimations)
         self.show_predict_graph()
     
     # 学習
@@ -115,7 +117,15 @@ class Model:
         # ファイル保存
         with open(self.path_stan_fit, mode="wb") as f:
             pickle.dump(self.fit, f)
-        print('学習ファイル保存')
+        # 学習したときのデータを保存
+        self.learn_info = {
+            'df': df,
+            'next_event': next_event,
+        }
+        # 保存
+        with open(self.path_learn_info, mode="wb") as f:
+            pickle.dump(self.learn_info, f)
+        print('学習ファイル保存完了')
     
     # コンパイル
     def compile_stan(self):
@@ -124,31 +134,10 @@ class Model:
         with open(self.path_stan_model, mode="wb") as f:
             pickle.dump(self.stm, f)
     
-    # 予測結果を保存
-    def save_predict_result(self, next_event, df):
+    # 予測値表示
+    def show_predict_value(self, interval_estimations):
         # 予測結果取り出し
-        ms = self.fit.extract() 
-        # 辞書型で保存
-        self.learn_result = {
-            'df': df,
-            'next_event': next_event,
-            'result': {key:{'mean': ms[key].mean(axis=0),
-                      'p5':   np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, 5), axis=0)),
-                      'p25':  np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, 25), axis=0)),
-                      'p75':  np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, 75), axis=0)),
-                      'p95':  np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, 95), axis=0)),
-                      }
-            for key in ['alpha_pred', 'mu_pred', 'b_len_pred']
-            }
-        }
-        # 保存
-        with open(self.path_learn_result, mode="wb") as f:
-            pickle.dump(self.learn_result, f)
-    
-    # 予測結果の値表示
-    def show_predict_value(self):
-        # 予測結果取り出し
-        ms = self.fit.extract() 
+        ms = self.fit.extract()
         key = 'alpha_pred'
         
         # 点推定
@@ -156,38 +145,48 @@ class Model:
         print('点推定:', mean[-1])
         
         # 区間推定
-        p5  = np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, 5), axis=0))
-        p25 = np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, 25), axis=0))
-        p75 = np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, 75), axis=0))
-        p95 = np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, 95), axis=0))
-        print('区間推定(90%):', p5[-1], '~', p95[-1])
-        print('区間推定(50%):', p25[-1], '~', p75[-1])
+        for p in interval_estimations:
+            low = 50 - p/2
+            high = 50 + p/2
+            low_value = np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, low), axis=0))
+            high_value = np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, high), axis=0))
+            print('区間推定('+ str(p) +'%):', low_value[-1], '~', high_value[-1])
     
-    # 予測結果グラフ表示
-    #def show_graph(self):
+    # 予測グラフ表示
     def show_predict_graph(self):
         # x軸
-        df = self.learn_result['df']
+        df = self.learn_info['df']
         X = df.index
         X_pred = X.tolist()
-        X_pred.append(self.learn_result['next_event']['date'])
+        X_pred.append(self.learn_info['next_event']['date'])
         
+        # プロットするパラメータ
+        plot_params = ['alpha_pred', 'mu_pred', 'b_len_pred']
+        # 表示したい信頼区間
+        p = 90
+        # 予測結果取り出し
+        ms = self.fit.extract()
         # 表示
-        try:
-            for key, value in self.learn_result['result'].items():
-                print(key)
-                fig = plt.figure()
-                ax = fig.add_subplot(111)
-                ax.plot(X_pred, value['mean'], label='predicted', c='red')
-                plt.fill_between(X_pred, value['p5'], value['p95'], color='red', alpha=0.2)
-                if key != 'b_len_pred':
-                    ax.plot(X, df['point'], label='observed')
-                if key == 'alpha_pred':
-                    plt.legend(loc='upper left', borderaxespad=0)
-                ax.set_title(key)
-                plt.show()
-        except ValueError:
-            print('データフレームが変わったので、再度学習してください')
+        for key in plot_params:
+            print(key)
+            # 予測結果
+            mean = ms[key].mean(axis=0)
+            p_low  = 50 - p/2
+            p_high = 50 + p/2
+            pred_low  = np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, p_low), axis=0))
+            pred_high = np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, p_high), axis=0))
+            # プロット
+            fig = plt.figure()
+            ax = fig.add_subplot(111)
+            ax.plot(X_pred, mean, label='predicted', c='red')
+            plt.fill_between(X_pred, pred_low, pred_high, color='red', alpha=0.2)
+            # alpha, muは実測値も並べる
+            if key in ['alpha_pred', 'mu_pred']:
+                ax.plot(X, df['point'], label='observed')
+            if key == 'alpha_pred':
+                plt.legend(loc='upper left', borderaxespad=0)
+            ax.set_title(key)
+            plt.show()
 
 # Stanコード
 # ローカルトレンド+時系変数モデル
