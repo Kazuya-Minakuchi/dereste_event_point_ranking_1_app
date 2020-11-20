@@ -21,6 +21,11 @@ class Model:
     def __init__(self, file_info):
         # stanコード
         self.model_code = model_code
+        # stanパラメータ
+        self.stan_params = {
+                'n_itr': 5000,
+                'chains': 3,
+                }
         # 予測値表示設定
         self.value_interval_estimations = [50, 90] # 信頼区間
         # 予測グラフ表示設定
@@ -65,7 +70,6 @@ class Model:
         df = self.data.get_dataframe()
         # 学習
         self.learning(next_event, df)
-        self.save_predict_result(next_event, df)
         self.show_learning_result()
         self.show_predict()
     
@@ -94,7 +98,7 @@ class Model:
         if self.stm is None:
             print('学習前にコンパイルします')
             self.compile_stan()
-        # データ（辞書型）
+        # stanに渡すデータ（辞書型）
         dat = {
             'T':   len(df),                  # 全日付の日数
             'len': df['length(h)'].tolist(), # イベント期間(h)
@@ -102,17 +106,13 @@ class Model:
             'pred_term': 1,
             'pred_len' : [next_event['length(h)']]
         }
-        # パラメータ設定
-        n_itr = 5000
-        n_warmup = n_itr - 1000
-        chains = 3
         print('学習開始')
         self.fit = self.stm.sampling(
                 data=dat,
-                iter=n_itr,
-                chains=chains,
+                iter=self.stan_params['n_itr'],
+                chains=self.stan_params['chains'],
                 n_jobs=1,
-                warmup=n_warmup,
+                warmup=self.stan_params['n_itr'] - 1000,
                 algorithm="NUTS",
                 verbose=False)
         print('学習完了')
@@ -169,7 +169,7 @@ class Model:
         # プロット
         for key in self.plot_params:
             print(key)
-            # 予測結果
+            # 結果取り出し
             mean = ms[key].mean(axis=0)
             pred_low  = np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, p_low), axis=0))
             pred_high = np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, p_high), axis=0))
