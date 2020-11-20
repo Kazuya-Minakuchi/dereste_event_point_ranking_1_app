@@ -20,6 +20,9 @@ def predict_input_event_data():
 class Model:
     def __init__(self, file_info):
         self.model_code = model_code
+        # 信頼区間設定
+        self.value_interval_estimations = [50, 90] # 値表示
+        self.graph_interval_estimation = 90        # グラフ表示
         # データフレーム操作インスタンス
         self.data = Data(file_info)
         # 読み込みファイルのパス
@@ -83,8 +86,7 @@ class Model:
         
         # 予測結果を抽出
         # 区間推定したいパーセントリスト
-        interval_estimations = [50, 90]
-        self.show_predict_value(interval_estimations)
+        self.show_predict_value()
         self.show_predict_graph()
     
     # 学習
@@ -135,7 +137,7 @@ class Model:
             pickle.dump(self.stm, f)
     
     # 予測値表示
-    def show_predict_value(self, interval_estimations):
+    def show_predict_value(self):
         # 予測結果取り出し
         ms = self.fit.extract()
         key = 'alpha_pred'
@@ -145,7 +147,7 @@ class Model:
         print('点推定:', mean[-1])
         
         # 区間推定
-        for p in interval_estimations:
+        for p in self.value_interval_estimations:
             low = 50 - p/2
             high = 50 + p/2
             low_value = np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, low), axis=0))
@@ -163,7 +165,7 @@ class Model:
         # プロットするパラメータ
         plot_params = ['alpha_pred', 'mu_pred', 'b_len_pred']
         # 表示したい信頼区間
-        p = 90
+        p = self.graph_interval_estimation
         # 予測結果取り出し
         ms = self.fit.extract()
         # 表示
