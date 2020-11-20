@@ -20,14 +20,14 @@ class Data:
         paths = file_info['paths']
         files = file_info['files']
         self.path_dataframe = paths['data'] + files['dataframe']
-        self.df = self.load_dataframe()
+        self.load_dataframe()
     
-    # データ読み込み、整形
+    # データ読み込み
     def load_dataframe(self):
-        df = pd.read_csv(self.path_dataframe)
-        df['date'] = pd.to_datetime(df['date']).dt.date
-        df.set_index('date', inplace=True)
-        return df
+        self.df = pd.read_csv(self.path_dataframe)
+        self.df['date'] = pd.to_datetime(self.df['date']).dt.date
+        self.df.set_index('date', inplace=True)
+        return self.df
     
     # データ保存
     def save_dataframe(self):
