@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 from utils import select_method, input_yes_no, input_date, input_str, input_natural_number, input_plus_number, input_dict
 
-# イベントデータのインプットに使う
+# データのインプットに使う
 def input_event_data():
     # カラム名と使う関数
     input_list = [
@@ -14,13 +14,15 @@ def input_event_data():
     ]
     return input_dict(input_list)
 
-# イベントデータを管理するクラス
+# データを管理するクラス
 class Data:
     def __init__(self, file_info):
         paths = file_info['paths']
         files = file_info['files']
         self.path_dataframe = paths['data'] + files['dataframe']
         self.load_dataframe()
+        # グラフ表示設定
+        self.plot_params = ['point', 'length(h)'] # 表示項目
     
     # データ読み込み
     def load_dataframe(self):
@@ -57,7 +59,7 @@ class Data:
     
     # グラフ表示
     def show_graph(self):
-        for key in ['point', 'length(h)']:
+        for key in self.plot_params:
             print(key)
             self.df[key].plot()
             plt.title(key)
@@ -80,15 +82,13 @@ class Data:
         # Noneが帰ってきたらキャンセル
         if date is None:
             return
-        
         # 入力チェック
         try:
             df_del = self.df.loc[[date], :]
         except KeyError:
             print('一致するイベントがありません')
             return
-        
-        # 再確認
+        # 最終確認
         print('以下のイベントを削除して良いですか？')
         print(df_del)
         del_flg = input_yes_no()
@@ -98,6 +98,8 @@ class Data:
             # 保存
             self.save_dataframe()
             print('削除しました')
+        else:
+            print('キャンセルします')
     
     # データフレーム渡す
     def get_dataframe(self):
