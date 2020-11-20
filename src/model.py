@@ -20,18 +20,20 @@ def predict_input_event_data():
 class Model:
     def __init__(self, file_info):
         self.model_code = model_code
-        # 信頼区間設定
-        self.value_interval_estimations = [50, 90] # 値表示
-        self.graph_interval_estimation = 90        # グラフ表示
+        # 予測値表示設定
+        self.value_interval_estimations = [50, 90] # 信頼区間
+        # 予測グラフ表示設定
+        self.plot_params = ['alpha_pred', 'mu_pred', 'b_len_pred'] # 表示項目
+        self.graph_interval_estimation = 90 # 信頼区間
         # データフレーム操作インスタンス
         self.data = Data(file_info)
         # 読み込みファイルのパス
         paths = file_info['paths']
-        self.path_learn_info = paths['data']  + 'stan_learn_info.pickle'
-        self.path_stan_model = paths['model'] + 'stan_model.pickle'
-        self.path_stan_fit   = paths['model'] + 'stan_fit.pickle'
+        self.path_learned_data = paths['data']  + 'stan_learned_data.pickle'
+        self.path_stan_model   = paths['model'] + 'stan_model.pickle'
+        self.path_stan_fit     = paths['model'] + 'stan_fit.pickle'
         # ファイル読み込み
-        self.learn_info = check_pickle_open(self.path_learn_info, '')
+        self.learned_data = check_pickle_open(self.path_learned_data, '')
         self.stm        = check_pickle_open(self.path_stan_model, '')
         self.fit        = check_pickle_open(self.path_stan_fit, '')
     
@@ -78,11 +80,11 @@ class Model:
     
     # 予測結果表示
     def show_predict(self):
-        if self.learn_info is None:
+        if self.learned_data is None:
             print('先に学習してください')
             return
         print('予測したイベント')
-        print(self.learn_info['next_event'])
+        print(self.learned_data['next_event'])
         
         # 予測結果を抽出
         # 区間推定したいパーセントリスト
@@ -120,13 +122,13 @@ class Model:
         with open(self.path_stan_fit, mode="wb") as f:
             pickle.dump(self.fit, f)
         # 学習したときのデータを保存
-        self.learn_info = {
+        self.learned_data = {
             'df': df,
             'next_event': next_event,
         }
         # 保存
-        with open(self.path_learn_info, mode="wb") as f:
-            pickle.dump(self.learn_info, f)
+        with open(self.path_learned_data, mode="wb") as f:
+            pickle.dump(self.learned_data, f)
         print('学習ファイル保存完了')
     
     # コンパイル
@@ -157,24 +159,20 @@ class Model:
     # 予測グラフ表示
     def show_predict_graph(self):
         # x軸
-        df = self.learn_info['df']
+        df = self.learned_data['df']
         X = df.index
         X_pred = X.tolist()
-        X_pred.append(self.learn_info['next_event']['date'])
+        X_pred.append(self.learned_data['next_event']['date'])
         
-        # プロットするパラメータ
-        plot_params = ['alpha_pred', 'mu_pred', 'b_len_pred']
-        # 表示したい信頼区間
-        p = self.graph_interval_estimation
         # 予測結果取り出し
         ms = self.fit.extract()
         # 表示
-        for key in plot_params:
+        for key in self.plot_params:
             print(key)
             # 予測結果
             mean = ms[key].mean(axis=0)
-            p_low  = 50 - p/2
-            p_high = 50 + p/2
+            p_low  = 50 - self.graph_interval_estimation / 2
+            p_high = 50 + self.graph_interval_estimation / 2
             pred_low  = np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, p_low), axis=0))
             pred_high = np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, p_high), axis=0))
             # プロット
