@@ -2,8 +2,18 @@ from utils import select_method
 from data import Data
 from model import Model
 
-data = Data()
-model = Model()
+file_info = {
+        'paths': {
+                'data':  '../data/',
+                'model': '../models/',
+        },
+        'files': {
+                'dataframe':  'event_data.csv',
+        },
+}
+
+data = Data(file_info)
+model = Model(file_info)
 
 modes = {
         '1': {'name': 'データの確認・追加・削除など',

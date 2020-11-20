@@ -17,28 +17,29 @@ def predict_input_event_data():
 
 # 予測モデルを管理するクラス
 class Model:
-    def __init__(self):
-        # 読み込み設定
-        self.data_path =  '../data/'
-        self.dataframe_file_path  = self.data_path + 'event_data.csv'
-        self.next_event_file_path = self.data_path + 'next_event.pickle'
-        self.result_file_path     = self.data_path + 'predict_result.pickle'
+    def __init__(self, file_info):
         self.model_code = model_code
-        self.model_path = '../models/'
-        self.stan_model_path = self.model_path + 'stan_model.pickle'
-        self.stan_fit_path   = self.model_path + 'stan_fit.pickle'
-        # データ読み込み
-        self.load_dataframe()
-        self.next_event = check_pickle_open(self.next_event_file_path, '')
-        self.results_dict = check_pickle_open(self.result_file_path, '')
-        self.stm = check_pickle_open(self.stan_model_path, '')
-        self.fit = check_pickle_open(self.stan_fit_path, '')
+        paths = file_info['paths']
+        files = file_info['files']
+        # 読み込みファイル設定
+        self.path_dataframe       = paths['data'] + files['dataframe']
+        self.path_next_event_data = paths['data'] + 'next_event.pickle'
+        self.path_learn_result    = paths['data'] + 'predict_result.pickle'
+        self.path_stan_model = paths['model'] + 'stan_model.pickle'
+        self.path_stan_fit   = paths['model'] + 'stan_fit.pickle'
+        # 読み込み
+        self.df = self.load_dataframe()
+        self.next_event = check_pickle_open(self.path_next_event_data, '')
+        self.learn_result = check_pickle_open(self.path_learn_result, '')
+        self.stm = check_pickle_open(self.path_stan_model, '')
+        self.fit = check_pickle_open(self.path_stan_fit, '')
     
     # データフレーム読み込み、整形
     def load_dataframe(self):
-        self.df = pd.read_csv(self.dataframe_file_path)
-        self.df['date'] = pd.to_datetime(self.df['date']).dt.date
-        self.df.set_index('date', inplace=True)
+        df = pd.read_csv(self.path_dataframe)
+        df['date'] = pd.to_datetime(df['date']).dt.date
+        df.set_index('date', inplace=True)
+        return df
     
     # メソッド選択
     def select_method(self):
@@ -62,7 +63,7 @@ class Model:
         print('予測したい(次回の)イベントの情報を入力してください')
         self.next_event = predict_input_event_data()
         # ファイル保存
-        with open(self.next_event_file_path, mode="wb") as f:
+        with open(self.path_next_event_data, mode="wb") as f:
             pickle.dump(self.next_event, f)
             
         self.learning()
@@ -82,13 +83,13 @@ class Model:
     
     # 予測結果表示
     def show_predict(self):
-        if self.results_dict is None:
+        if self.learn_result is None:
             print('先に学習してください')
             return
         print('予測したイベント')
         print(self.next_event)
         #結果を抽出
-        alpha_pred = self.results_dict['result']['alpha_pred']
+        alpha_pred = self.learn_result['result']['alpha_pred']
         mean = alpha_pred['mean']
         p5 =  alpha_pred['p5']
         p25 = alpha_pred['p25']
@@ -117,7 +118,7 @@ class Model:
             'pred_len' : [self.next_event['length(h)']]
         }
         # パラメータ設定
-        n_itr = 4000
+        n_itr = 5000
         n_warmup = n_itr - 1000
         chains = 3
         print('学習開始')
@@ -131,7 +132,7 @@ class Model:
                 verbose=False)
         print('学習完了')
         # ファイル保存
-        with open(self.stan_fit_path, mode="wb") as f:
+        with open(self.path_stan_fit, mode="wb") as f:
             pickle.dump(self.fit, f)
         print('学習ファイル保存')
     
@@ -139,7 +140,7 @@ class Model:
     def compile_stan(self):
         self.stm = pystan.StanModel(model_code=self.model_code)
         # ファイル保存
-        with open(self.stan_model_path, mode="wb") as f:
+        with open(self.path_stan_model, mode="wb") as f:
             pickle.dump(self.stm, f)
     
     # 予測結果を保存
@@ -151,7 +152,7 @@ class Model:
         # 予測結果
         ms = self.fit.extract() 
         # 辞書型で保存
-        self.results_dict = {
+        self.learn_result = {
             'X': X,
             'X_pred': X_pred,
             'result': {key:{'mean': ms[key].mean(axis=0),
@@ -164,15 +165,15 @@ class Model:
             }
         }
         # 保存
-        with open(self.result_file_path, mode="wb") as f:
-            pickle.dump(self.results_dict, f)
+        with open(self.path_learn_result, mode="wb") as f:
+            pickle.dump(self.learn_result, f)
     
     def show_graph(self):
-        X = self.results_dict['X']
-        X_pred = self.results_dict['X_pred']
+        X = self.learn_result['X']
+        X_pred = self.learn_result['X_pred']
         # 表示
         try:
-            for key, value in self.results_dict['result'].items():
+            for key, value in self.learn_result['result'].items():
                 print(key)
                 fig = plt.figure()
                 ax = fig.add_subplot(111)
@@ -233,5 +234,14 @@ generated quantities{
 """
 
 if __name__ == '__main__':
-    model = Model()
+    file_info = {
+            'paths': {
+                    'data':  '../data/',
+                    'model': '../models/',
+            },
+            'files': {
+                    'dataframe':  'event_data.csv',
+            },
+    }
+    model = Model(file_info)
     model.select_method()

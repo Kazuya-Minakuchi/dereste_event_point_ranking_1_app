@@ -16,19 +16,22 @@ def input_event_data():
 
 # イベントデータを管理するクラス
 class Data:
-    def __init__(self):
-        self.data_path = '../data/event_data.csv'
-        self.load_dataframe()
+    def __init__(self, file_info):
+        paths = file_info['paths']
+        files = file_info['files']
+        self.path_dataframe = paths['data'] + files['dataframe']
+        self.df = self.load_dataframe()
     
     # データ読み込み、整形
     def load_dataframe(self):
-        self.df = pd.read_csv(self.data_path)
-        self.df['date'] = pd.to_datetime(self.df['date']).dt.date
-        self.df.set_index('date', inplace=True)
+        df = pd.read_csv(self.path_dataframe)
+        df['date'] = pd.to_datetime(df['date']).dt.date
+        df.set_index('date', inplace=True)
+        return df
     
     # データ保存
     def save_dataframe(self):
-        self.df.to_csv(self.data_path)
+        self.df.to_csv(self.path_dataframe)
     
     # 選択肢
     def select_method(self):
@@ -97,5 +100,14 @@ class Data:
             print('削除しました')
 
 if __name__ == '__main__':
-    data = Data()
+    file_info = {
+            'paths': {
+                    'data':  '../data/',
+                    'model': '../models/',
+            },
+            'files': {
+                    'dataframe':  'event_data.csv',
+            },
+    }
+    data = Data(file_info)
     data.select_method()
