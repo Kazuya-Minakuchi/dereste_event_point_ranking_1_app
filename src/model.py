@@ -69,7 +69,6 @@ class Model:
         if next_event is None:
             return
         df = self.data.get_dataframe()
-        # 学習
         self.learning(next_event, df)
         self.show_learning_result()
         self.show_predict()
@@ -139,21 +138,21 @@ class Model:
         with open(self.path_stan_model, mode="wb") as f:
             pickle.dump(self.stm, f)
     
-    # 実測と予測の誤差
+    # 実測と予測のズレ
     def show_act_pred_diff(self):
         # 実測
         y_true = self.learned_data['df']['point']
         # 予測
         ms = self.fit.extract()
-        key = 'alpha_pred'
-        y_pred = ms[key].mean(axis=0)[:-1]
+        y_pred = ms['alpha_pred'].mean(axis=0)[:-1]
         # 決定係数 (R2)
         print('r2_score', r2_score(y_true, y_pred))
+        # グラフ
+        xy_min = min(min(y_true), min(y_pred))
+        xy_max = max(max(y_true), max(y_pred))
         fig, ax = plt.subplots(1, 1)
         ax.scatter(y_true, y_pred)
-        ideal_min = min(min(y_true), min(y_pred))
-        ideal_max = max(max(y_true), max(y_pred))
-        ax.plot([ideal_min, ideal_max], [ideal_min, ideal_max], color='r')
+        ax.plot([xy_min, xy_max], [xy_min, xy_max], color='r')
         plt.show()
     
     # 予測値表示
@@ -164,7 +163,7 @@ class Model:
         
         # 点推定
         mean = ms[key].mean(axis=0)
-        print('点推定:', mean[-1])
+        print('点推定:', '{:,}'.format(int(mean[-1])))
         
         # 区間推定
         for p in self.value_interval_estimations:
@@ -172,7 +171,7 @@ class Model:
             high = 50 + p/2
             low_value = np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, low), axis=0))
             high_value = np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, high), axis=0))
-            print('区間推定('+ str(p) +'%):', low_value[-1], '~', high_value[-1])
+            print('区間推定('+ str(p) +'%):', '{:,}'.format(int(low_value[-1])), '~', '{:,}'.format(int(high_value[-1])))
     
     # 予測グラフ表示
     def show_predict_graph(self):
