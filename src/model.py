@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import pickle
 import matplotlib.pyplot as plt
+from sklearn.metrics import r2_score
 import pystan
 
 from data import Data
@@ -82,6 +83,8 @@ class Model:
         print(self.fit)
         self.fit.plot()
         plt.show()
+        # 実測と予測のズレ
+        self.show_act_pred_diff()
     
     # 予測結果表示
     def show_predict(self):
@@ -135,6 +138,23 @@ class Model:
         # ファイル保存
         with open(self.path_stan_model, mode="wb") as f:
             pickle.dump(self.stm, f)
+    
+    # 実測と予測の誤差
+    def show_act_pred_diff(self):
+        # 実測
+        y_true = self.learned_data['df']['point']
+        # 予測
+        ms = self.fit.extract()
+        key = 'alpha_pred'
+        y_pred = ms[key].mean(axis=0)[:-1]
+        # 決定係数 (R2)
+        print('r2_score', r2_score(y_true, y_pred))
+        fig, ax = plt.subplots(1, 1)
+        ax.scatter(y_true, y_pred)
+        ideal_min = min(min(y_true), min(y_pred))
+        ideal_max = max(max(y_true), max(y_pred))
+        ax.plot([ideal_min, ideal_max], [ideal_min, ideal_max], color='r')
+        plt.show()
     
     # 予測値表示
     def show_predict_value(self):
