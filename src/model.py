@@ -4,6 +4,7 @@ import pickle
 import matplotlib.pyplot as plt
 import pystan
 
+from data import Data
 from utils import select_method, check_pickle_open, input_date, input_plus_number, input_dict
 
 # 予測したいイベントデータのインプットに使う
@@ -19,27 +20,20 @@ def predict_input_event_data():
 class Model:
     def __init__(self, file_info):
         self.model_code = model_code
-        paths = file_info['paths']
-        files = file_info['files']
+        # データフレーム読み込み
+        data = Data(file_info)
+        self.df = data.get_dataframe()
         # 読み込みファイル設定
-        self.path_dataframe       = paths['data'] + files['dataframe']
+        paths = file_info['paths']
         self.path_next_event_data = paths['data'] + 'next_event.pickle'
         self.path_learn_result    = paths['data'] + 'predict_result.pickle'
         self.path_stan_model = paths['model'] + 'stan_model.pickle'
         self.path_stan_fit   = paths['model'] + 'stan_fit.pickle'
         # 読み込み
-        self.df = self.load_dataframe()
         self.next_event = check_pickle_open(self.path_next_event_data, '')
         self.learn_result = check_pickle_open(self.path_learn_result, '')
         self.stm = check_pickle_open(self.path_stan_model, '')
         self.fit = check_pickle_open(self.path_stan_fit, '')
-    
-    # データフレーム読み込み、整形
-    def load_dataframe(self):
-        df = pd.read_csv(self.path_dataframe)
-        df['date'] = pd.to_datetime(df['date']).dt.date
-        df.set_index('date', inplace=True)
-        return df
     
     # メソッド選択
     def select_method(self):
