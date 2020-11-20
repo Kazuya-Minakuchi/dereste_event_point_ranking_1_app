@@ -20,20 +20,17 @@ def predict_input_event_data():
 class Model:
     def __init__(self, file_info):
         self.model_code = model_code
-        # データフレーム読み込み
-        data = Data(file_info)
-        self.df = data.get_dataframe()
+        # データフレーム操作インスタンス
+        self.data = Data(file_info)
         # 読み込みファイル設定
         paths = file_info['paths']
-        self.path_next_event_data = paths['data'] + 'next_event.pickle'
-        self.path_learn_result    = paths['data'] + 'predict_result.pickle'
-        self.path_stan_model = paths['model'] + 'stan_model.pickle'
-        self.path_stan_fit   = paths['model'] + 'stan_fit.pickle'
+        self.path_learn_result = paths['data']  + 'stan_predict_result.pickle'
+        self.path_stan_model   = paths['model'] + 'stan_model.pickle'
+        self.path_stan_fit     = paths['model'] + 'stan_fit.pickle'
         # 読み込み
-        self.next_event = check_pickle_open(self.path_next_event_data, '')
         self.learn_result = check_pickle_open(self.path_learn_result, '')
-        self.stm = check_pickle_open(self.path_stan_model, '')
-        self.fit = check_pickle_open(self.path_stan_fit, '')
+        self.stm          = check_pickle_open(self.path_stan_model, '')
+        self.fit          = check_pickle_open(self.path_stan_fit, '')
     
     # メソッド選択
     def select_method(self):
@@ -54,14 +51,15 @@ class Model:
     
     # 学習&予測
     def learn_predict(self):
+        # データ準備
         print('予測したい(次回の)イベントの情報を入力してください')
-        self.next_event = predict_input_event_data()
-        # ファイル保存
-        with open(self.path_next_event_data, mode="wb") as f:
-            pickle.dump(self.next_event, f)
-            
-        self.learning()
-        self.save_predict_result()
+        next_event = predict_input_event_data()
+        if next_event is None:
+            return
+        df = self.data.get_dataframe()
+        # 学習
+        self.learning(next_event, df)
+        self.save_predict_result(next_event, df)
         self.show_learning_result()
         self.show_predict()
     
@@ -81,35 +79,24 @@ class Model:
             print('先に学習してください')
             return
         print('予測したイベント')
-        print(self.next_event)
-        #結果を抽出
-        alpha_pred = self.learn_result['result']['alpha_pred']
-        mean = alpha_pred['mean']
-        p5 =  alpha_pred['p5']
-        p25 = alpha_pred['p25']
-        p75 = alpha_pred['p75']
-        p95 = alpha_pred['p95']
+        print(self.learn_result['next_event'])
         
-        # 点推定
-        print('点推定:', mean[-1])
-        # 区間推定
-        print('区間推定(90%):', p5[-1], '~', p95[-1])
-        print('区間推定(50%):', p25[-1], '~', p75[-1])
-        # グラフ表示
-        self.show_graph()
+        # 予測結果を抽出
+        self.show_predict_value()
+        self.show_predict_graph()
     
     # 学習
-    def learning(self):
+    def learning(self, next_event, df):
         if self.stm is None:
             print('学習前にコンパイルします')
             self.compile_stan()
         # データ（辞書型）
         dat = {
-            'T':   len(self.df),                  # 全日付の日数
-            'len': self.df['length(h)'].tolist(), # イベント期間(h)
-            'y':   self.df['point'].tolist(),     # 観測値
+            'T':   len(df),                  # 全日付の日数
+            'len': df['length(h)'].tolist(), # イベント期間(h)
+            'y':   df['point'].tolist(),     # 観測値
             'pred_term': 1,
-            'pred_len' : [self.next_event['length(h)']]
+            'pred_len' : [next_event['length(h)']]
         }
         # パラメータ設定
         n_itr = 5000
@@ -138,17 +125,13 @@ class Model:
             pickle.dump(self.stm, f)
     
     # 予測結果を保存
-    def save_predict_result(self):
-        # x軸
-        X = self.df.index
-        X_pred = self.df.index.tolist()
-        X_pred.append(self.next_event['date'])
-        # 予測結果
+    def save_predict_result(self, next_event, df):
+        # 予測結果取り出し
         ms = self.fit.extract() 
         # 辞書型で保存
         self.learn_result = {
-            'X': X,
-            'X_pred': X_pred,
+            'df': df,
+            'next_event': next_event,
             'result': {key:{'mean': ms[key].mean(axis=0),
                       'p5':   np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, 5), axis=0)),
                       'p25':  np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, 25), axis=0)),
@@ -162,9 +145,33 @@ class Model:
         with open(self.path_learn_result, mode="wb") as f:
             pickle.dump(self.learn_result, f)
     
-    def show_graph(self):
-        X = self.learn_result['X']
-        X_pred = self.learn_result['X_pred']
+    # 予測結果の値表示
+    def show_predict_value(self):
+        # 予測結果取り出し
+        ms = self.fit.extract() 
+        key = 'alpha_pred'
+        
+        # 点推定
+        mean = ms[key].mean(axis=0)
+        print('点推定:', mean[-1])
+        
+        # 区間推定
+        p5  = np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, 5), axis=0))
+        p25 = np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, 25), axis=0))
+        p75 = np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, 75), axis=0))
+        p95 = np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, 95), axis=0))
+        print('区間推定(90%):', p5[-1], '~', p95[-1])
+        print('区間推定(50%):', p25[-1], '~', p75[-1])
+    
+    # 予測結果グラフ表示
+    #def show_graph(self):
+    def show_predict_graph(self):
+        # x軸
+        df = self.learn_result['df']
+        X = df.index
+        X_pred = X.tolist()
+        X_pred.append(self.learn_result['next_event']['date'])
+        
         # 表示
         try:
             for key, value in self.learn_result['result'].items():
@@ -174,7 +181,7 @@ class Model:
                 ax.plot(X_pred, value['mean'], label='predicted', c='red')
                 plt.fill_between(X_pred, value['p5'], value['p95'], color='red', alpha=0.2)
                 if key != 'b_len_pred':
-                    ax.plot(X, self.df['point'], label='observed')
+                    ax.plot(X, df['point'], label='observed')
                 if key == 'alpha_pred':
                     plt.legend(loc='upper left', borderaxespad=0)
                 ax.set_title(key)
