@@ -17,12 +17,13 @@ def input_event_data():
 # データを管理するクラス
 class Data:
     def __init__(self, file_info):
+        # グラフ表示設定
+        self.plot_params = ['point', 'length(h)'] # 表示項目
+        # ファイル読み込み
         paths = file_info['paths']
         files = file_info['files']
         self.path_dataframe = paths['data'] + files['dataframe']
         self.load_dataframe()
-        # グラフ表示設定
-        self.plot_params = ['point', 'length(h)'] # 表示項目
     
     # データ読み込み
     def load_dataframe(self):
