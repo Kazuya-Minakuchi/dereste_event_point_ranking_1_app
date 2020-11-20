@@ -51,7 +51,7 @@ def input_date():
             date = datetime.date(dttm.year, dttm.month, dttm.day)
             return date
         except ValueError:
-            print('入力形式が間違っています')
+            print('入力形式が誤っています')
 
 # 自然数のインプットに使う
 def input_natural_number():

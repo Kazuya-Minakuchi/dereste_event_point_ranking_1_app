@@ -85,9 +85,6 @@ class Model:
             return
         print('予測したイベント')
         print(self.learned_data['next_event'])
-        
-        # 予測結果を抽出
-        # 区間推定したいパーセントリスト
         self.show_predict_value()
         self.show_predict_graph()
     
