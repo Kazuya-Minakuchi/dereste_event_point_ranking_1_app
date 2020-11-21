@@ -23,11 +23,11 @@ class Data:
         paths = file_info['paths']
         files = file_info['files']
         self.path_dataframe = paths['data'] + files['dataframe']
-        self.df = self.load_dataframe()
+        self.df = self.load_dataframe(self.path_dataframe)
     
     # データ読み込み
-    def load_dataframe(self):
-        df = pd.read_csv(self.path_dataframe)
+    def load_dataframe(self, path):
+        df = pd.read_csv(path)
         df['date'] = pd.to_datetime(df['date']).dt.date
         df.set_index('date', inplace=True)
         return df
