@@ -21,7 +21,7 @@ def input_predict_event_data():
 def get_percentile_value(data, p):
     """
     data: 試行回数*時系列データ数のリスト
-    p: 取得したいパーセンタイル
+    p:    取得したいパーセンタイル
     """
     return np.array(
             pd.DataFrame(data)
