@@ -41,12 +41,12 @@ def input_str():
 # 日付のインプットに使う
 def input_date():
     while True:
+        date_str = input_data('日付(yyyy-mm-dd形式)')
+        # Noneが帰ってきたら終了
+        if date_str is None:
+            return
+        # 入力形式チェック
         try:
-            date_str = input_data('日付(yyyy-mm-dd形式)')
-            # Noneが帰ってきたら終了
-            if date_str is None:
-                return
-            # 入力形式チェック
             dttm = datetime.datetime.strptime(date_str, '%Y-%m-%d')
             date = datetime.date(dttm.year, dttm.month, dttm.day)
             return date
@@ -56,11 +56,11 @@ def input_date():
 # 自然数のインプットに使う
 def input_natural_number():
     while True:
+        point = input_data('正の整数')
+        # Noneが帰ってきたら終了
+        if point is None:
+            return
         try:
-            point = input_data('正の整数')
-            # Noneが帰ってきたら終了
-            if point is None:
-                return
             point = int(point)
             # 自然数の場合、返す
             if point > 0:
@@ -72,11 +72,11 @@ def input_natural_number():
 # 正の数のインプットに使う
 def input_plus_number():
     while True:
+        length = input_data('正の数')
+        # Noneが帰ってきたら終了
+        if length is None:
+            return
         try:
-            length = input_data('正の数')
-            # Noneが帰ってきたら終了
-            if length is None:
-                return
             length = float(length)
             # 正の数の場合、返す
             if length > 0:
