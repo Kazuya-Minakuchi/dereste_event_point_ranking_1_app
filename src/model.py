@@ -17,6 +17,17 @@ def input_predict_event_data():
     ]
     return input_dict(input_list)
 
+# サンプリングデータから指定したパーセンタイルの値を取得する
+def get_percentile_value(data, p):
+    """
+    data: 試行回数*時系列データ数のリスト
+    p: 取得したいパーセンタイル
+    """
+    return np.array(
+            pd.DataFrame(data)
+            .apply(lambda x: np.percentile(x, p), axis=0)
+            )
+
 # 予測モデルを管理するクラス
 class Model:
     def __init__(self, file_info):
@@ -167,10 +178,10 @@ class Model:
         
         # 区間推定
         for p in self.value_interval_estimations:
-            low = 50 - p/2
-            high = 50 + p/2
-            low_value = np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, low), axis=0))
-            high_value = np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, high), axis=0))
+            p_low = 50 - p/2
+            p_high = 50 + p/2
+            low_value  = get_percentile_value(ms[key], p_low)
+            high_value = get_percentile_value(ms[key], p_high)
             print('区間推定('+ str(p) +'%):', '{:,}'.format(int(low_value[-1])), '~', '{:,}'.format(int(high_value[-1])))
     
     # 予測グラフ表示
@@ -190,8 +201,8 @@ class Model:
             print(key)
             # 結果取り出し
             mean = ms[key].mean(axis=0)
-            pred_low  = np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, p_low), axis=0))
-            pred_high = np.array(pd.DataFrame(ms[key]).apply(lambda x: np.percentile(x, p_high), axis=0))
+            pred_low  = get_percentile_value(ms[key], p_low)
+            pred_high = get_percentile_value(ms[key], p_high)
             # プロット
             fig, ax = plt.subplots()
             ax.plot(X_pred, mean, label='predicted', c='red')
