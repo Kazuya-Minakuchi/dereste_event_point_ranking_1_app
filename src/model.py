@@ -6,7 +6,7 @@ from sklearn.metrics import r2_score
 import pystan
 
 from data import Data
-from utils import select_method, check_pickle_open, input_date, input_plus_number, input_dict
+from utils import select_method, load_pickle, input_date, input_plus_number, input_dict
 
 # 予測したいイベントデータのインプットに使う
 def input_predict_event_data():
@@ -51,9 +51,9 @@ class Model:
         self.path_stan_model   = paths['model'] + 'stan_model.pickle'
         self.path_stan_fit     = paths['model'] + 'stan_fit.pickle'
         # ファイル読み込み
-        self.learned_data = check_pickle_open(self.path_learned_data, '')
-        self.stm        = check_pickle_open(self.path_stan_model, '')
-        self.fit        = check_pickle_open(self.path_stan_fit, '')
+        self.learned_data = load_pickle(self.path_learned_data, '')
+        self.stm          = load_pickle(self.path_stan_model, '')
+        self.fit          = load_pickle(self.path_stan_fit, '')
     
     # メソッド選択
     def select_method(self):

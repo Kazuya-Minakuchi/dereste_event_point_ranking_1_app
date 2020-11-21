@@ -116,8 +116,8 @@ def input_dict(input_list):
         data_dict[input_data['name']] = data
     return data_dict
 
-# ファイルがあったら開く、なかったらメッセージ表示してNoneを返す
-def check_pickle_open(path, fault_message):
+# pickleファイルがあったら開く、なかったらメッセージ表示してNoneを返す
+def load_pickle(path, fault_message):
     try:
         with open(path, mode="rb") as f:
             return pickle.load(f)
