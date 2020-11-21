@@ -56,15 +56,15 @@ def input_date():
 # 自然数のインプットに使う
 def input_natural_number():
     while True:
-        point = input_data('正の整数')
+        num = input_data('正の整数')
         # Noneが帰ってきたら終了
-        if point is None:
+        if num is None:
             return
         try:
-            point = int(point)
+            num = int(num)
             # 自然数の場合、返す
-            if point > 0:
-                return point
+            if num > 0:
+                return num
             print('正の整数を入力してください')
         except ValueError:
             print('入力値が誤っています')
@@ -72,15 +72,15 @@ def input_natural_number():
 # 正の数のインプットに使う
 def input_plus_number():
     while True:
-        length = input_data('正の数')
+        num = input_data('正の数')
         # Noneが帰ってきたら終了
-        if length is None:
+        if num is None:
             return
         try:
-            length = float(length)
+            num = float(num)
             # 正の数の場合、返す
-            if length > 0:
-                return length
+            if num > 0:
+                return num
             print('正の数を入力してください')
         except ValueError:
             print('入力値が誤っています')
@@ -88,13 +88,13 @@ def input_plus_number():
 # yes, noのインプットに使う
 def input_yes_no():
     while True:
-        data = input_data('[Y]es, [N]o')
+        ym = input_data('[Y]es, [N]o')
         # Noneが帰ってきたらキャンセル
-        if data is None:
+        if ym is None:
             return
-        elif data == 'Y':
+        elif ym == 'Y':
             return True
-        elif data == 'N':
+        elif ym == 'N':
             return False
         print('入力値が誤っています')
 
@@ -102,7 +102,7 @@ def input_yes_no():
 def input_dict(input_list):
     """
     input_listは↓のdictのリスト
-    name:     カラム名
+    name:     データ名(戻るdictのkeyになる)
     function: データ入力に使う関数
     """
     # カラムごとに取得し、辞書型で返す
