@@ -66,38 +66,6 @@ def input_natural_number():
             return num
         print('正の整数を入力してください')
 
-
-# 文字列が日付型に変換できるか
-def is_date(check_str):
-    try:
-        temp = datetime.datetime.strptime(check_str, '%Y-%m-%d')
-        return True
-    except ValueError:
-        return False
-
-# 文字列が自然数に変換できるか
-def is_natural_number(check_str):
-    # 整数か
-    try:
-        num = int(check_str)
-    except ValueError:
-        return False
-    # 0より大きいか
-    if num > 0:
-        return True
-    return False
-
-def is_positive_number(check_str):
-    # 数値に直せるか
-    try:
-        num = float(check_str)
-    except ValueError:
-        return False
-    # 正の数か
-    if num > 0:
-        return True
-    return False
-
 # 正の数のインプットに使う
 def input_positive_number():
     while True:
@@ -140,6 +108,38 @@ def input_dict(input_list):
             return
         data_dict[input_data['name']] = data
     return data_dict
+
+# 文字列が日付形式か
+def is_date(check_str):
+    try:
+        temp = datetime.datetime.strptime(check_str, '%Y-%m-%d')
+        return True
+    except ValueError:
+        return False
+
+# 文字列が自然数か
+def is_natural_number(check_str):
+    # 整数か
+    try:
+        num = int(check_str)
+    except ValueError:
+        return False
+    # 0より大きいか
+    if num > 0:
+        return True
+    return False
+
+# 文字列が正の数か
+def is_positive_number(check_str):
+    # 数値に直せるか
+    try:
+        num = float(check_str)
+    except ValueError:
+        return False
+    # 正の数か
+    if num > 0:
+        return True
+    return False
 
 # pickleファイルがあったら開く、なかったらメッセージ表示してNoneを返す
 def load_pickle(path, fault_message):
