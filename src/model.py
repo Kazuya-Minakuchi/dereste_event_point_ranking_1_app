@@ -6,7 +6,8 @@ from sklearn.metrics import r2_score
 import pystan
 
 from data import Data
-from utils import select_method, load_pickle, input_date, input_positive_number, input_dict
+from utils import (select_method, load_pickle, input_date,
+                   input_positive_number, input_dict)
 
 # 予測したいイベントデータのインプットに使う
 def input_predict_event_data():
