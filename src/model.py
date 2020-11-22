@@ -261,14 +261,6 @@ generated quantities{
 """
 
 if __name__ == '__main__':
-    file_info = {
-            'paths': {
-                    'data':  '../data/',
-                    'model': '../models/',
-            },
-            'files': {
-                    'dataframe':  'event_data.csv',
-            },
-    }
-    model = Model(file_info)
+    import config
+    model = Model(config.file_info)
     model.select_method()

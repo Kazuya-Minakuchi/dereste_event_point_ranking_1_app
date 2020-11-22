@@ -107,14 +107,6 @@ class Data:
         return self.df
 
 if __name__ == '__main__':
-    file_info = {
-            'paths': {
-                    'data':  '../data/',
-                    'model': '../models/',
-            },
-            'files': {
-                    'dataframe':  'event_data.csv',
-            },
-    }
-    data = Data(file_info)
+    import config
+    data = Data(config.file_info)
     data.select_method()
