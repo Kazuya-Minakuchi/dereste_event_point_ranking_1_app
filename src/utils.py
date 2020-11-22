@@ -26,12 +26,13 @@ def select_method(select_dict):
         # Noneが帰ってきたら終了
         if mode_num is None:
             return
+        print(select_dict[mode_num]['name'])
         try:
-            print(select_dict[mode_num]['name'])
             select_dict[mode_num]['method']()
-            print('')
         except KeyError:
             print('正しい数字を入力してください')
+        else:
+            print('')
 
 # 文字列のインプットに使う
 def input_str():
@@ -48,10 +49,11 @@ def input_date():
         # 入力形式チェック
         try:
             dttm = datetime.datetime.strptime(date_str, '%Y-%m-%d')
-            date = datetime.date(dttm.year, dttm.month, dttm.day)
-            return date
         except ValueError:
             print('入力形式が誤っています')
+        else:
+            date = datetime.date(dttm.year, dttm.month, dttm.day)
+            return date
 
 # 自然数のインプットに使う
 def input_natural_number():
@@ -62,12 +64,13 @@ def input_natural_number():
             return
         try:
             num = int(num)
+        except ValueError:
+            print('入力値が誤っています')
+        else:
             # 自然数の場合、返す
             if num > 0:
                 return num
             print('正の整数を入力してください')
-        except ValueError:
-            print('入力値が誤っています')
 
 # 正の数のインプットに使う
 def input_plus_number():
@@ -78,12 +81,13 @@ def input_plus_number():
             return
         try:
             num = float(num)
+        except ValueError:
+            print('入力値が誤っています')
+        else:
             # 正の数の場合、返す
             if num > 0:
                 return num
             print('正の数を入力してください')
-        except ValueError:
-            print('入力値が誤っています')
 
 # yes, noのインプットに使う
 def input_yes_no():
