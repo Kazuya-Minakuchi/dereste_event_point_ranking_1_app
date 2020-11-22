@@ -1,7 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from utils import select_method, input_yes_no, input_date, input_str, input_natural_number, input_plus_number, input_dict
+from utils import select_method, input_yes_no, input_date, input_str, input_natural_number, input_positive_number, input_dict
 
 # データのインプットに使う
 def input_event_data():
@@ -10,7 +10,7 @@ def input_event_data():
             {'name': 'date',       'function': input_date},
             {'name': 'event_name', 'function': input_str},
             {'name': 'point',      'function': input_natural_number},
-            {'name': 'length(h)',  'function': input_plus_number},
+            {'name': 'length(h)',  'function': input_positive_number},
     ]
     return input_dict(input_list)
 

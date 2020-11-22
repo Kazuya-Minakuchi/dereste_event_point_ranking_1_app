@@ -6,14 +6,14 @@ from sklearn.metrics import r2_score
 import pystan
 
 from data import Data
-from utils import select_method, load_pickle, input_date, input_plus_number, input_dict
+from utils import select_method, load_pickle, input_date, input_positive_number, input_dict
 
 # 予測したいイベントデータのインプットに使う
 def input_predict_event_data():
     # カラム名と使う関数
     input_list = [
             {'name': 'date',      'function': input_date},
-            {'name': 'length(h)', 'function': input_plus_number},
+            {'name': 'length(h)', 'function': input_positive_number},
     ]
     return input_dict(input_list)
 
