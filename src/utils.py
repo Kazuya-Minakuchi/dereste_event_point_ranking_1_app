@@ -47,47 +47,68 @@ def input_date():
         if date_str is None:
             return
         # 入力形式チェック
-        try:
+        if is_date(date_str):
             dttm = datetime.datetime.strptime(date_str, '%Y-%m-%d')
-        except ValueError:
-            print('入力形式が誤っています')
-        else:
             date = datetime.date(dttm.year, dttm.month, dttm.day)
             return date
+        print('入力形式が誤っています')
 
 # 自然数のインプットに使う
 def input_natural_number():
     while True:
-        num = input_data('正の整数')
-        # Noneが帰ってきたら終了
-        if num is None:
+        num_str = input_data('正の整数')
+        # Noneが帰ってきたらキャンセル
+        if num_str is None:
             return
-        try:
-            num = int(num)
-        except ValueError:
-            print('入力値が誤っています')
-        else:
-            # 自然数の場合、返す
-            if num > 0:
-                return num
-            print('正の整数を入力してください')
+        # 入力形式チェック
+        if is_natural_number(num_str):
+            num = int(num_str)
+            return num
+        print('正の整数を入力してください')
+
+
+# 文字列が日付型に変換できるか
+def is_date(check_str):
+    try:
+        temp = datetime.datetime.strptime(check_str, '%Y-%m-%d')
+        return True
+    except ValueError:
+        return False
+
+# 文字列が自然数に変換できるか
+def is_natural_number(check_str):
+    # 整数か
+    try:
+        num = int(check_str)
+    except ValueError:
+        return False
+    # 0より大きいか
+    if num > 0:
+        return True
+    return False
+
+def is_positive_number(check_str):
+    # 数値に直せるか
+    try:
+        num = float(check_str)
+    except ValueError:
+        return False
+    # 正の数か
+    if num > 0:
+        return True
+    return False
 
 # 正の数のインプットに使う
-def input_plus_number():
+def input_positive_number():
     while True:
-        num = input_data('正の数')
+        num_str = input_data('正の数')
         # Noneが帰ってきたら終了
-        if num is None:
+        if num_str is None:
             return
-        try:
-            num = float(num)
-        except ValueError:
-            print('入力値が誤っています')
-        else:
-            # 正の数の場合、返す
-            if num > 0:
-                return num
-            print('正の数を入力してください')
+        if is_positive_number(num_str):
+            num = float(num_str)
+            return num
+        print('正の数を入力してください')
 
 # yes, noのインプットに使う
 def input_yes_no():
