@@ -1,8 +1,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from utils import select_method, execute_dict_functions
-from inputs import (input_yes_no, input_date, input_str, input_natural_number,
+from src.utils import select_method, execute_dict_functions
+from src.inputs import (input_yes_no, input_date, input_str, input_natural_number,
                     input_positive_number)
 
 # データのインプットに使う
@@ -113,6 +113,6 @@ class Data:
         return self.df
 
 if __name__ == '__main__':
-    import config
+    from src import config
     data = Data(config.file_info)
     data.select_method()

@@ -1,9 +1,5 @@
-import os
-import sys
 from test.support import captured_stdin
 import datetime
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from src.inputs import (input_data, input_str, input_date, input_natural_number,
                         input_positive_number, convert_str_date,
