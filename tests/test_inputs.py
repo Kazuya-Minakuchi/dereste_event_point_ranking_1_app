@@ -53,20 +53,14 @@ def test_input_yes_no():
 
 def test_convert_str_date():
     assert convert_str_date('2020-11-11') == datetime.date(2020, 11, 11)
-    assert convert_str_date('2020-15-11') == False
     assert convert_str_date('a') == False
 
 def test_convert_str_natural_number():
     assert convert_str_natural_number('1') == 1
-    assert convert_str_natural_number('0') == False
-    assert convert_str_natural_number('5.5') == False
-    assert convert_str_natural_number('-2') == False
     assert convert_str_natural_number('a') == False
 
 def test_convert_str_positive_number():
     assert convert_str_positive_number('1.5') == 1.5
-    assert convert_str_positive_number('-2.5') == False
-    assert convert_str_positive_number('0') == False
     assert convert_str_positive_number('a') == False
 
 def test_loop_input():
@@ -89,7 +83,6 @@ def test_input_dict():
 def test_is_date():
     assert is_date('2020-11-20') == True
     assert is_date('2020-13-20') == False
-    assert is_date('2020') == False
     assert is_date('a') == False
 
 def test_is_natural_number():
