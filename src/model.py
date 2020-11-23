@@ -12,11 +12,11 @@ from inputs import input_date, input_positive_number, input_dict
 # 予測したいイベントデータのインプットに使う
 def input_predict_event_data():
     # カラム名: 入力に使う関数
-    input_list = {
+    in_dict = {
         'date':      input_date,
         'length(h)': input_positive_number,
     }
-    return input_dict(input_list)
+    return input_dict(in_dict)
 
 # サンプリングデータから指定したパーセンタイルの値を取得する
 def get_percentile_value(data, p):

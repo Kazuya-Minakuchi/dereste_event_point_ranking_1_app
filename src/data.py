@@ -8,13 +8,13 @@ from inputs import (input_yes_no, input_date, input_str, input_natural_number,
 # データのインプットに使う
 def input_event_data():
     # カラム名: 入力に使う関数
-    input_list = {
+    in_dict = {
         'date':       input_date,
         'event_name': input_str,
         'point':      input_natural_number,
         'length(h)':  input_positive_number,
     }
-    return input_dict(input_list)
+    return input_dict(in_dict)
 
 # データを管理するクラス
 class Data:
