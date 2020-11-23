@@ -112,7 +112,7 @@ def input_dict(in_dict):
 # 文字列が日付形式か
 def is_date(check_str):
     try:
-        temp = datetime.datetime.strptime(check_str, '%Y-%m-%d')
+        _ = datetime.datetime.strptime(check_str, '%Y-%m-%d')
         return True
     except ValueError:
         return False
