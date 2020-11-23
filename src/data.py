@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 from utils import select_method
 from inputs import (input_yes_no, input_date, input_str, input_natural_number,
-                    input_positive_number, input_dict)
+                    input_positive_number, execute_dict_functions)
 
 # データのインプットに使う
 def input_event_data():
@@ -14,7 +14,7 @@ def input_event_data():
         'point':      input_natural_number,
         'length(h)':  input_positive_number,
     }
-    return input_dict(in_dict)
+    return execute_dict_functions(in_dict)
 
 # データを管理するクラス
 class Data:

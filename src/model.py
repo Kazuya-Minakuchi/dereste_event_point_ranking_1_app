@@ -7,7 +7,7 @@ import pystan
 
 from data import Data
 from utils import select_method, load_pickle
-from inputs import input_date, input_positive_number, input_dict
+from inputs import input_date, input_positive_number, execute_dict_functions
 
 # 予測したいイベントデータのインプットに使う
 def input_predict_event_data():
@@ -16,7 +16,7 @@ def input_predict_event_data():
         'date':      input_date,
         'length(h)': input_positive_number,
     }
-    return input_dict(in_dict)
+    return execute_dict_functions(in_dict)
 
 # サンプリングデータから指定したパーセンタイルの値を取得する
 def get_percentile_value(data, p):

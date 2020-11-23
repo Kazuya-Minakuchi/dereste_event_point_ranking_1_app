@@ -92,7 +92,7 @@ def loop_input(print_str: str, convert_func):
         return result
 
 # インプットから辞書型データつくる
-def input_dict(in_dict):
+def execute_dict_functions(in_dict):
     """
     in_dictの中身
     key:      返すdictのkey
