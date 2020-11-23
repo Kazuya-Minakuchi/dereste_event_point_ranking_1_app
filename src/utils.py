@@ -5,9 +5,10 @@ import pickle
 def input_data(print_str):
     quit_str = 'q'
     data = input(print_str+ 'を入力してください。(' + quit_str + 'で戻る)')
+    # 終了キーのときはNoneを返す
     if data == quit_str:
         print('戻ります')
-        return
+        return None
     return data
 
 # メソッドの選択に使う
@@ -31,8 +32,7 @@ def select_method(select_dict):
             select_dict[mode_num]['method']()
         except KeyError:
             print('正しい数字を入力してください')
-        else:
-            print('')
+        print('')
 
 # 文字列のインプットに使う
 def input_str():
@@ -124,7 +124,7 @@ def is_natural_number(check_str):
         num = int(check_str)
     except ValueError:
         return False
-    # 0より大きいか
+    # 正の数か
     if num > 0:
         return True
     return False
