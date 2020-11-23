@@ -36,9 +36,9 @@ class Model:
         self.model_code = model_code
         # stanパラメータ
         self.stan_params = {
-                'n_itr': 5000,
-                'chains': 3,
-                }
+            'n_itr': 5000,
+            'chains': 3,
+        }
         # 予測値表示設定
         self.value_interval_estimations = [50, 90] # 信頼区間
         # 予測グラフ表示設定
@@ -60,15 +60,18 @@ class Model:
     def select_method(self):
         # 選択肢
         self.selection = {
-                '1': {'name': '学習&予測',
-                      'method': self.learn_predict,
-                      },
-                '2': {'name': '前回予測時の学習結果表示',
-                      'method': self.show_learning_result,
-                      },
-                '3': {'name': '前回予測時の推定値、グラフ表示',
-                      'method': self.show_predict,
-                      },
+            '1': {
+                'name': '学習&予測',
+                'method': self.learn_predict,
+            },
+            '2': {
+                'name': '前回予測時の学習結果表示',
+                'method': self.show_learning_result,
+            },
+            '3': {
+                'name': '前回予測時の推定値、グラフ表示',
+                'method': self.show_predict,
+            },
         }
         # 選ぶ
         select_method(self.selection)

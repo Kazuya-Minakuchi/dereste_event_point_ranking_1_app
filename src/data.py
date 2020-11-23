@@ -41,18 +41,22 @@ class Data:
     # 選択肢
     def select_method(self):
         self.selection = {
-                '1': {'name': 'データフレーム表示',
-                      'method': self.show_dataframe,
-                      },
-                '2': {'name': 'グラフ表示',
-                      'method': self.show_graph,
-                      },
-                '3': {'name': 'データ追加',
-                      'method': self.add_data,
-                      },
-                '4': {'name': 'データ削除',
-                      'method': self.delete_data,
-                      },
+            '1': {
+                'name': 'データフレーム表示',
+                'method': self.show_dataframe,
+            },
+            '2': {
+                'name': 'グラフ表示',
+                'method': self.show_graph,
+            },
+            '3': {
+                'name': 'データ追加',
+                'method': self.add_data,
+            },
+            '4': {
+                'name': 'データ削除',
+                'method': self.delete_data,
+            },
         }
         select_method(self.selection)
     
