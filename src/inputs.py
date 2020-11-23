@@ -27,6 +27,10 @@ def input_natural_number():
 def input_positive_number():
     return loop_input('正の数', convert_str_positive_number)
 
+# yes, noのインプットに使う
+def input_yes_no():
+    return loop_input('[Y]es, [N]o', convert_str_y)
+
 # 文字列を日付型に変換
 def convert_str_date(date_str):
     # 入力形式が合っていれば日付型で返す
@@ -55,6 +59,18 @@ def convert_str_positive_number(num_str):
     # 入力形式が合わないとき
     return False
 
+# 文字列をYesフラグに変換
+def convert_str_y(yn):
+    """YはTrue, NはFalseに変換
+    """
+    if yn == 'Y':
+        return True
+    # Nの場合キャンセル
+    elif yn == 'N':
+        return None
+    # 入力形式が合わないとき
+    return False
+
 # 入力形式が合わない場合のループ処理
 def loop_input(print_str: str, convert_func):
     """
@@ -73,36 +89,23 @@ def loop_input(print_str: str, convert_func):
             continue
         return result
 
-# yes, noのインプットに使う
-def input_yes_no():
-    while True:
-        ym = input_data('[Y]es, [N]o')
-        # Noneが帰ってきたらキャンセル
-        if ym is None:
-            return
-        elif ym == 'Y':
-            return True
-        elif ym == 'N':
-            return False
-        print('入力値が誤っています')
-
 # インプットから辞書型データつくる
-def input_dict(input_list):
+def input_dict(in_dict):
     """
     input_listは↓のdictのリスト
-    name:     データ名(戻るdictのkeyになる)
-    function: データ入力に使う関数
+    key:      データ名(戻るdictのkeyになる)
+    function: 値（戻るdictのvalueになる)
     """
     # カラムごとに取得し、辞書型で返す
-    data_dict = {}
-    for input_data in input_list:
-        print(input_data['name'], '入力')
-        data = input_data['function']()
+    out_dict = {}
+    for key, function in in_dict.items():
+        print(key, '入力')
+        data = function()
         # Noneが帰ってきたらキャンセル
         if data is None:
             return
-        data_dict[input_data['name']] = data
-    return data_dict
+        out_dict[key] = data
+    return out_dict
 
 # 文字列が日付形式か
 def is_date(check_str):
