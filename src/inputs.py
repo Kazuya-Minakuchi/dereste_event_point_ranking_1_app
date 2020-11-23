@@ -61,7 +61,9 @@ def convert_str_positive_number(num_str):
 
 # 文字列をYesフラグに変換
 def convert_str_y(yn):
-    """YはTrue, NはFalseに変換
+    """
+    YはTrue, NはNoneで返す
+    Falseは形式エラーに使う
     """
     if yn == 'Y':
         return True
@@ -75,15 +77,15 @@ def convert_str_y(yn):
 def loop_input(print_str: str, convert_func):
     """
     print_str: 入力画面で表示する文字列
-    convert_func: 文字列を他の型に変換する関数。変換できないときはFalseが帰ってくる
+    convert_func: 文字列を他の型に変換する関数。変換できないときはFalseが返ってくる
     """
     while True:
         ret_str = input_data(print_str)
-        # Noneが帰ってきたらキャンセル
+        # Noneが返ってきたらキャンセル
         if ret_str is None:
             return None
         result = convert_func(ret_str)
-        # Falseが帰ってきたらもう一回
+        # Falseが返ってきたら入力しなおし
         if result == False:
             print('入力形式が誤っています')
             continue
@@ -94,14 +96,14 @@ def input_dict(in_dict):
     """
     input_listは↓のdictのリスト
     key:      データ名(戻るdictのkeyになる)
-    function: 値（戻るdictのvalueになる)
+    function: 値を得る関数（戻るdictのvalueになる)
     """
     # カラムごとに取得し、辞書型で返す
     out_dict = {}
     for key, function in in_dict.items():
         print(key, '入力')
         data = function()
-        # Noneが帰ってきたらキャンセル
+        # Noneが返ってきたらキャンセル
         if data is None:
             return
         out_dict[key] = data

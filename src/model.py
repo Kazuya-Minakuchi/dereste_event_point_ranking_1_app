@@ -11,7 +11,7 @@ from inputs import input_date, input_positive_number, input_dict
 
 # 予測したいイベントデータのインプットに使う
 def input_predict_event_data():
-    # カラム名と使う関数
+    # カラム名: 入力に使う関数
     input_list = {
         'date':      input_date,
         'length(h)': input_positive_number,

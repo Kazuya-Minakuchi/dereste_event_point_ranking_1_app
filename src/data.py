@@ -7,7 +7,7 @@ from inputs import (input_yes_no, input_date, input_str, input_natural_number,
 
 # データのインプットに使う
 def input_event_data():
-    # カラム名と使う関数
+    # カラム名: 入力に使う関数
     input_list = {
         'date':       input_date,
         'event_name': input_str,
