@@ -1,9 +1,9 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from utils import select_method
+from utils import select_method, execute_dict_functions
 from inputs import (input_yes_no, input_date, input_str, input_natural_number,
-                    input_positive_number, execute_dict_functions)
+                    input_positive_number)
 
 # データのインプットに使う
 def input_event_data():

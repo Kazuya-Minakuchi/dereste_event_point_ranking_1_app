@@ -91,24 +91,6 @@ def loop_input(print_str: str, convert_func):
             continue
         return result
 
-# インプットから辞書型データつくる
-def execute_dict_functions(in_dict):
-    """
-    in_dictの中身
-    key:      返すdictのkey
-    function: 値を得る関数（返すdictのvalue)
-    """
-    # カラムごとに取得し、辞書型で返す
-    out_dict = {}
-    for key, function in in_dict.items():
-        print(key, '入力')
-        data = function()
-        # Noneが返ってきたらキャンセル
-        if data is None:
-            return None
-        out_dict[key] = data
-    return out_dict
-
 # 文字列が日付形式か
 def is_date(check_str):
     try:
