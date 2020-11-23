@@ -1,4 +1,8 @@
 import config
 from app import App
 
-app = App(config.file_info)
+def main():
+    app = App(config.file_info)
+
+if __name__ == '__main__':
+    main()
