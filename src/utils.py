@@ -28,12 +28,12 @@ def select_method(selections):
             print('正しい数字を入力してください')
         print('')
 
-# インプットから辞書型データつくる
+# 辞書データの関数を実行し、戻り値の入った辞書を返す
 def execute_dict_functions(in_dict):
     """
     in_dictの中身
     key:      返すdictのkey
-    function: 値を得る関数（返すdictのvalue)
+    function: 値（返すdictのvalue)を得る関数
     """
     # カラムごとに取得し、辞書型で返す
     out_dict = {}
