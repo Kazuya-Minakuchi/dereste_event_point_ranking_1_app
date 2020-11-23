@@ -94,9 +94,9 @@ def loop_input(print_str: str, convert_func):
 # インプットから辞書型データつくる
 def input_dict(in_dict):
     """
-    input_listは↓のdictのリスト
-    key:      データ名(返すdictのkeyになる)
-    function: 値を得る関数（返すdictのvalueになる)
+    in_dictの中身
+    key:      返すdictのkey
+    function: 値を得る関数（返すdictのvalue)
     """
     # カラムごとに取得し、辞書型で返す
     out_dict = {}
@@ -105,7 +105,7 @@ def input_dict(in_dict):
         data = function()
         # Noneが返ってきたらキャンセル
         if data is None:
-            return
+            return None
         out_dict[key] = data
     return out_dict
 
