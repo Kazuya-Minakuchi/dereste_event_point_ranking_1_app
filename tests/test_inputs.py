@@ -8,8 +8,8 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from src.inputs import (input_data, input_str, input_date, input_natural_number,
                         input_positive_number, convert_str_date,
                         convert_str_natural_number, convert_str_positive_number,
-                        loop_input, input_yes_no, execute_dict_functions, is_date,
-                        is_natural_number, is_positive_number)
+                        loop_input, input_yes_no, is_date, is_natural_number,
+                        is_positive_number)
 
 def test_input_data():
     with captured_stdin() as stdin:
@@ -72,13 +72,6 @@ def test_loop_input():
         stdin.write('a')
         stdin.seek(0)
         assert loop_input('', (lambda x: x)) == 'a'
-
-def test_execute_dict_functions():
-    input_list = {
-        'a': (lambda: 'b'),
-        'c': (lambda: 10),
-    }
-    assert execute_dict_functions(input_list) == {'a': 'b', 'c': 10}
 
 def test_is_date():
     assert is_date('2020-11-20') == True
