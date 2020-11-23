@@ -3,7 +3,7 @@ import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from src.utils import is_date, is_natural_number, is_positive_number
+from src.inputs import is_date, is_natural_number, is_positive_number
 
 def test_is_date():
     assert is_date('2020-11-20') == True
@@ -24,4 +24,3 @@ def test_is_positive_number():
     assert is_positive_number('0') == False
     assert is_positive_number('-5.5') == False
     assert is_positive_number('a') == False
-
