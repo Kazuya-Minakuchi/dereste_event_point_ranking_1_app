@@ -17,22 +17,18 @@ def input_str():
 
 # 日付のインプットに使う
 def input_date():
-    return loop_input(convert_input_date)
+    return loop_input('日付(yyyy-mm-dd形式)', convert_str_date)
 
 # 自然数のインプットに使う
 def input_natural_number():
-    return loop_input(convert_input_natural_number)
+    return loop_input('正の整数', convert_str_natural_number)
 
 # 正の数のインプットに使う
 def input_positive_number():
-    return loop_input(convert_input_positive_number)
+    return loop_input('正の数', convert_str_positive_number)
 
-# インプットを日付に変換
-def convert_input_date():
-    date_str = input_data('日付(yyyy-mm-dd形式)')
-    # Noneが帰ってきたらキャンセル
-    if date_str is None:
-        return
+# 文字列を日付型に変換
+def convert_str_date(date_str):
     # 入力形式が合っていれば日付型で返す
     if is_date(date_str):
         dttm = datetime.datetime.strptime(date_str, '%Y-%m-%d')
@@ -41,12 +37,8 @@ def convert_input_date():
     # 入力形式が合わないとき
     return False
 
-# インプットを自然数に変換
-def convert_input_natural_number():
-    num_str = input_data('正の整数')
-    # Noneが帰ってきたらキャンセル
-    if num_str is None:
-        return
+# 文字列を自然数に変換
+def convert_str_natural_number(num_str):
     # 入力形式が合っていればintで返す
     if is_natural_number(num_str):
         num = int(num_str)
@@ -54,12 +46,8 @@ def convert_input_natural_number():
     # 入力形式が合わないとき
     return False
 
-# インプットを正の数に変換
-def convert_input_positive_number():
-    num_str = input_data('正の数')
-    # Noneが帰ってきたらキャンセル
-    if num_str is None:
-        return
+# 文字列を正の数に変換
+def convert_str_positive_number(num_str):
     # 入力形式が合っていればfloatで返す
     if is_positive_number(num_str):
         num = float(num_str)
@@ -68,14 +56,19 @@ def convert_input_positive_number():
     return False
 
 # 入力形式が合わない場合のループ処理
-def loop_input(input_func):
+def loop_input(print_str: str, convert_func):
+    """
+    print_str: 入力画面で表示する文字列
+    convert_func: 文字列を他の型に変換する関数。変換できないときはFalseが帰ってくる
+    """
     while True:
-        result = input_func()
+        ret_str = input_data(print_str)
         # Noneが帰ってきたらキャンセル
-        if result is None:
+        if ret_str is None:
             return None
+        result = convert_func(ret_str)
         # Falseが帰ってきたらもう一回
-        elif result == False:
+        if result == False:
             print('入力形式が誤っています')
             continue
         return result
