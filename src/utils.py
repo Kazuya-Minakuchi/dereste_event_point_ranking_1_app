@@ -24,7 +24,7 @@ def select_method(select_dict):
         for key, value in select_dict.items():
             print(key, ':', value['name'])
         mode_num = input_data('数字')
-        # Noneが帰ってきたら終了
+        # Noneが帰ってきたらキャンセル
         if mode_num is None:
             return
         print(select_dict[mode_num]['name'])
@@ -43,10 +43,10 @@ def input_str():
 def input_date():
     while True:
         date_str = input_data('日付(yyyy-mm-dd形式)')
-        # Noneが帰ってきたら終了
+        # Noneが帰ってきたらキャンセル
         if date_str is None:
             return
-        # 入力形式チェック
+        # 入力形式が合っていれば日付型で返す
         if is_date(date_str):
             dttm = datetime.datetime.strptime(date_str, '%Y-%m-%d')
             date = datetime.date(dttm.year, dttm.month, dttm.day)
@@ -60,7 +60,7 @@ def input_natural_number():
         # Noneが帰ってきたらキャンセル
         if num_str is None:
             return
-        # 入力形式チェック
+        # 入力形式が合っていればintで返す
         if is_natural_number(num_str):
             num = int(num_str)
             return num
@@ -70,9 +70,10 @@ def input_natural_number():
 def input_positive_number():
     while True:
         num_str = input_data('正の数')
-        # Noneが帰ってきたら終了
+        # Noneが帰ってきたらキャンセル
         if num_str is None:
             return
+        # 入力形式が合っていればfloatで返す
         if is_positive_number(num_str):
             num = float(num_str)
             return num
