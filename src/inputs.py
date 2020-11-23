@@ -95,8 +95,8 @@ def loop_input(print_str: str, convert_func):
 def input_dict(in_dict):
     """
     input_listは↓のdictのリスト
-    key:      データ名(戻るdictのkeyになる)
-    function: 値を得る関数（戻るdictのvalueになる)
+    key:      データ名(返すdictのkeyになる)
+    function: 値を得る関数（返すdictのvalueになる)
     """
     # カラムごとに取得し、辞書型で返す
     out_dict = {}
