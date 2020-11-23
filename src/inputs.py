@@ -17,43 +17,68 @@ def input_str():
 
 # 日付のインプットに使う
 def input_date():
-    while True:
-        date_str = input_data('日付(yyyy-mm-dd形式)')
-        # Noneが帰ってきたらキャンセル
-        if date_str is None:
-            return
-        # 入力形式が合っていれば日付型で返す
-        if is_date(date_str):
-            dttm = datetime.datetime.strptime(date_str, '%Y-%m-%d')
-            date = datetime.date(dttm.year, dttm.month, dttm.day)
-            return date
-        print('入力形式が誤っています')
+    return loop_input(convert_input_date)
 
 # 自然数のインプットに使う
 def input_natural_number():
-    while True:
-        num_str = input_data('正の整数')
-        # Noneが帰ってきたらキャンセル
-        if num_str is None:
-            return
-        # 入力形式が合っていればintで返す
-        if is_natural_number(num_str):
-            num = int(num_str)
-            return num
-        print('正の整数を入力してください')
+    return loop_input(convert_input_natural_number)
 
 # 正の数のインプットに使う
 def input_positive_number():
+    return loop_input(convert_input_positive_number)
+
+# インプットを日付に変換
+def convert_input_date():
+    date_str = input_data('日付(yyyy-mm-dd形式)')
+    # Noneが帰ってきたらキャンセル
+    if date_str is None:
+        return
+    # 入力形式が合っていれば日付型で返す
+    if is_date(date_str):
+        dttm = datetime.datetime.strptime(date_str, '%Y-%m-%d')
+        date = datetime.date(dttm.year, dttm.month, dttm.day)
+        return date
+    # 入力形式が合わないとき
+    return False
+
+# インプットを自然数に変換
+def convert_input_natural_number():
+    num_str = input_data('正の整数')
+    # Noneが帰ってきたらキャンセル
+    if num_str is None:
+        return
+    # 入力形式が合っていればintで返す
+    if is_natural_number(num_str):
+        num = int(num_str)
+        return num
+    # 入力形式が合わないとき
+    return False
+
+# インプットを正の数に変換
+def convert_input_positive_number():
+    num_str = input_data('正の数')
+    # Noneが帰ってきたらキャンセル
+    if num_str is None:
+        return
+    # 入力形式が合っていればfloatで返す
+    if is_positive_number(num_str):
+        num = float(num_str)
+        return num
+    # 入力形式が合わないとき
+    return False
+
+# 入力形式が合わない場合のループ処理
+def loop_input(input_func):
     while True:
-        num_str = input_data('正の数')
+        result = input_func()
         # Noneが帰ってきたらキャンセル
-        if num_str is None:
-            return
-        # 入力形式が合っていればfloatで返す
-        if is_positive_number(num_str):
-            num = float(num_str)
-            return num
-        print('正の数を入力してください')
+        if result is None:
+            return None
+        # Falseが帰ってきたらもう一回
+        elif result == False:
+            print('入力形式が誤っています')
+            continue
+        return result
 
 # yes, noのインプットに使う
 def input_yes_no():
