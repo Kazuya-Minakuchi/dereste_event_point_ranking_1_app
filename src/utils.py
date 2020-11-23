@@ -2,24 +2,28 @@ import pickle
 from inputs import input_data
 
 # メソッドの選択に使う
-def select_method(select_dict):
+def select_method(selections):
     """
-    select_dictの中身
+    selectionsの中身
     key:    数字(文字列)
         name:   表示する文字
         method: 実行するメソッド
     """
     while True:
+        # 選択肢表示
         print('モードを選んでください')
-        for key, value in select_dict.items():
+        for key, value in selections.items():
             print(key, ':', value['name'])
+        # 選択
         mode_num = input_data('数字')
         # Noneが帰ってきたらキャンセル
         if mode_num is None:
             return
-        print(select_dict[mode_num]['name'])
+        print(selections[mode_num]['name'])
+        # 正しい値が入力されていたら、実行
         try:
-            select_dict[mode_num]['method']()
+            selections[mode_num]['method']()
+        # 値が間違っていたら、やり直し
         except KeyError:
             print('正しい数字を入力してください')
         print('')
