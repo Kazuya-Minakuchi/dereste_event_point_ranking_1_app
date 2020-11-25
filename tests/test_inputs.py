@@ -1,11 +1,12 @@
 from test.support import captured_stdin
 import datetime
 
-from src.inputs import (input_data, input_str, input_date, input_natural_number,
-                        input_positive_number, convert_str_date,
+from src.inputs import (input_data, input_str, input_date, input_integer,
+                        input_natural_number, input_positive_number, convert_str_date,
                         convert_str_natural_number, convert_str_positive_number,
                         loop_input, input_yes_no, is_date, is_natural_number,
-                        is_positive_number)
+                        is_positive_number, 
+                        convert_str_integer, is_integer)
 
 def test_input_data():
     with captured_stdin() as stdin:
@@ -29,6 +30,12 @@ def test_input_date():
         stdin.seek(0)
         assert input_date() == datetime.date(2020, 11, 11)
 
+def test_input_integer():
+    with captured_stdin() as stdin:
+        stdin.write('10')
+        stdin.seek(0)
+        assert input_integer() == 10
+
 def test_input_natural_number():
     with captured_stdin() as stdin:
         stdin.write('10')
@@ -50,6 +57,10 @@ def test_input_yes_no():
 def test_convert_str_date():
     assert convert_str_date('2020-11-11') == datetime.date(2020, 11, 11)
     assert convert_str_date('a') == False
+
+def test_convert_str_integer():
+    assert convert_str_integer('10') == 10
+    assert convert_str_integer('a') == False
 
 def test_convert_str_natural_number():
     assert convert_str_natural_number('1') == 1
@@ -81,6 +92,12 @@ def test_is_natural_number():
     assert is_natural_number('0.5') == False
     assert is_natural_number('-5') == False
     assert is_natural_number('a') == False
+
+def test_is_integer():
+    assert is_integer('10') == True
+    assert is_integer('-10') == True
+    assert is_integer('5.5') == False
+    assert is_integer('a') == False
 
 def test_is_positive_number():
     assert is_positive_number('5.5') == True

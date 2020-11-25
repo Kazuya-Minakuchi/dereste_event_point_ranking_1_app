@@ -19,6 +19,10 @@ def input_str():
 def input_date():
     return loop_input('日付(yyyy-mm-dd形式)', convert_str_date)
 
+# 整数のインプットに使う
+def input_integer():
+    return loop_input('整数', convert_str_integer)
+
 # 自然数のインプットに使う
 def input_natural_number():
     return loop_input('正の整数', convert_str_natural_number)
@@ -38,6 +42,14 @@ def convert_str_date(date_str):
         dttm = datetime.datetime.strptime(date_str, '%Y-%m-%d')
         date = datetime.date(dttm.year, dttm.month, dttm.day)
         return date
+    # 入力形式が合わないとき
+    return False
+
+# 文字列を整数に変換
+def convert_str_integer(num_str):
+    # 入力形式が合っていればintで返す
+    if is_integer(num_str):
+        return int(num_str)
     # 入力形式が合わないとき
     return False
 
@@ -102,14 +114,21 @@ def is_date(check_str):
 # 文字列が自然数か
 def is_natural_number(check_str):
     # 整数か
-    try:
+    if is_integer(check_str):
+        # 正の数か
         num = int(check_str)
+        if num > 0:
+            return True
+    return False
+
+# 文字列が整数か
+def is_integer(check_str):
+    # 整数か
+    try:
+        _ = int(check_str)
+        return True
     except ValueError:
         return False
-    # 正の数か
-    if num > 0:
-        return True
-    return False
 
 # 文字列が正の数か
 def is_positive_number(check_str):
