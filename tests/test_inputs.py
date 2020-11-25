@@ -3,7 +3,7 @@ import datetime
 
 from src.inputs import (input_data, input_str, input_date, input_integer,
                         input_natural_number, input_positive_number, convert_str_date,
-                        convert_str_natural_number, convert_str_positive_number,
+                        convert_str_natural_number, convert_str_positive_number, convert_str_y,
                         loop_input, input_yes_no, is_date, is_natural_number,
                         is_positive_number, 
                         convert_str_integer, is_integer)
@@ -35,6 +35,10 @@ def test_input_integer():
         stdin.write('10')
         stdin.seek(0)
         assert input_integer() == 10
+    with captured_stdin() as stdin:
+        stdin.write('0')
+        stdin.seek(0)
+        assert input_integer() == 0
 
 def test_input_natural_number():
     with captured_stdin() as stdin:
@@ -70,6 +74,11 @@ def test_convert_str_positive_number():
     assert convert_str_positive_number('1.5') == 1.5
     assert convert_str_positive_number('a') == False
 
+def test_convert_str_y():
+    assert convert_str_y('Y') == True
+    assert convert_str_y('N') == None
+    assert convert_str_y('a') == False
+
 def test_loop_input():
     with captured_stdin() as stdin:
         stdin.write('q')
@@ -79,6 +88,10 @@ def test_loop_input():
         stdin.write('a')
         stdin.seek(0)
         assert loop_input('', (lambda x: x)) == 'a'
+    with captured_stdin() as stdin:
+        stdin.write('0')
+        stdin.seek(0)
+        assert loop_input('', (lambda x: int(x))) == 0
 
 def test_is_date():
     assert is_date('2020-11-20') == True
