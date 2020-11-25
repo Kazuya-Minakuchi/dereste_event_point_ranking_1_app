@@ -25,9 +25,9 @@ def get_percentile_value(data, p):
     p:    取得したいパーセンタイル
     """
     return np.array(
-            pd.DataFrame(data)
-            .apply(lambda x: np.percentile(x, p), axis=0)
-            )
+        pd.DataFrame(data)
+        .apply(lambda x: np.percentile(x, p), axis=0)
+    )
 
 # 予測モデルを管理するクラス
 class Model:
