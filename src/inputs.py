@@ -79,7 +79,6 @@ def convert_str_y(yn):
     """
     if yn == 'Y':
         return True
-    # Nの場合キャンセル
     elif yn == 'N':
         return None
     # 入力形式が合わないとき
@@ -97,8 +96,11 @@ def loop_input(print_str: str, convert_func):
         if ret_str is None:
             return None
         result = convert_func(ret_str)
+        # 0はFalse判定されてしまうので、先に判別して返す
+        if result == 0:
+            return result
         # Falseが返ってきたら入力しなおし
-        if result == False:
+        elif result is False:
             print('入力形式が誤っています')
             continue
         return result
