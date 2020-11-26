@@ -37,7 +37,7 @@ class Model:
         self.model_code = model_code
         # stanパラメータ
         self.stan_params = {
-            'n_itr': 5000,
+            'n_itr': 6000,
             'chains': 3,
         }
         # 予測値表示設定
