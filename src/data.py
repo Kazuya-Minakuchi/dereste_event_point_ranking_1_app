@@ -23,10 +23,14 @@ class Data:
         # グラフ表示設定
         self.plot_params = ['point', 'length(h)'] # 表示項目
         # ファイル読み込み
-        paths = file_info['paths']
-        files = file_info['files']
-        self.path_dataframe = paths['data'] + files['dataframe']
+        self.paths = file_info['paths']
+        self.files = file_info['files']
         self.df = self.load_dataframe(self.path_dataframe)
+    
+    # データフレームファイルのパス
+    @property
+    def path_dataframe(self):
+        return self.paths['data'] + self.files['dataframe']
     
     # データ読み込み
     def load_dataframe(self, path):
@@ -76,6 +80,7 @@ class Data:
     # データ追加
     def add_data(self):
         data_dict = input_event_data()
+        # Noneが帰ってきたらキャンセル
         if data_dict is None:
             return
         df_add = pd.DataFrame(data_dict, index=['0']).set_index('date')
@@ -114,6 +119,6 @@ class Data:
         return self.df
 
 if __name__ == '__main__':
-    from src import config
+    import config
     data = Data(config.file_info)
     data.select_method()
