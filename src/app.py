@@ -1,6 +1,6 @@
-from src.selection import Selections, Selection
-from src.data import Data
-from src.model import Model
+from selection import Selections, Selection
+from data import Data
+from model import Model
 
 class App:
     def __init__(self, file_info):
@@ -22,6 +22,6 @@ class App:
         selections.select_method()
 
 if __name__ == '__main__':
-    from src import config
+    import config
     app = App(config.file_info)
     app.select_method()

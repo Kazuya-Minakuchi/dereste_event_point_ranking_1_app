@@ -1,6 +1,6 @@
 from typing import Any
 from dataclasses import dataclass
-from src.inputs import input_integer
+from inputs import input_integer
 
 class Selections:
     def __init__(self, selection_list):

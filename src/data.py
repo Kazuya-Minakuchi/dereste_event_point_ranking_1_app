@@ -1,9 +1,9 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from src.selection import Selections, Selection
-from src.utils import execute_dict_functions
-from src.inputs import (input_yes_no, input_date, input_str, input_natural_number,
+from selection import Selections, Selection
+from utils import execute_dict_functions
+from inputs import (input_yes_no, input_date, input_str, input_natural_number,
                     input_positive_number)
 
 # データのインプットに使う

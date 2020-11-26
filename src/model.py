@@ -5,10 +5,10 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import r2_score
 import pystan
 
-from src.data import Data
-from src.selection import Selections, Selection
-from src.utils import load_pickle, execute_dict_functions
-from src.inputs import input_date, input_positive_number
+from data import Data
+from selection import Selections, Selection
+from utils import load_pickle, execute_dict_functions
+from inputs import input_date, input_positive_number
 
 # 予測したいイベントデータのインプットに使う
 def input_predict_event_data():

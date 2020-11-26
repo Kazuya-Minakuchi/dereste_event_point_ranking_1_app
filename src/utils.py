@@ -1,5 +1,5 @@
 import pickle
-from src.inputs import input_data
+from inputs import input_data
 
 # メソッドの選択に使う
 def select_method(selections):
