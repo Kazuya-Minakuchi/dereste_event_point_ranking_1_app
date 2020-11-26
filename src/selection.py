@@ -6,6 +6,7 @@ class Selections:
     def __init__(self, selection_list):
         self.selections = {i: selection for i, selection in enumerate(selection_list)}
     
+    # 実行するメソッド選ぶ
     def select_method(self):
         while True:
             self.show_selection()
