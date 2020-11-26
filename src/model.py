@@ -33,8 +33,6 @@ def get_percentile_value(data, p):
 # 予測モデルを管理するクラス
 class Model:
     def __init__(self, file_info):
-        # stanコード
-        self.model_code = model_code
         # stanパラメータ
         self.stan_params = {
             'n_itr': 6000,
@@ -48,14 +46,23 @@ class Model:
         # データフレーム操作インスタンス
         self.data = Data(file_info)
         # 読み込みファイルのパス
-        paths = file_info['paths']
-        self.path_learned_data = paths['data']  + 'stan_learned_data.pickle'
-        self.path_stan_model   = paths['model'] + 'stan_model.pickle'
-        self.path_stan_fit     = paths['model'] + 'stan_fit.pickle'
+        self.paths = file_info['paths']
         # ファイル読み込み
         self.learned_data = load_pickle(self.path_learned_data, '')
         self.stm          = load_pickle(self.path_stan_model, '')
         self.fit          = load_pickle(self.path_stan_fit, '')
+    
+    @property
+    def path_learned_data(self):
+        return self.paths['data']  + 'stan_learned_data.pickle'
+    
+    @property
+    def path_stan_model(self):
+        return self.paths['model'] + 'stan_model.pickle'
+    
+    @property
+    def path_stan_fit(self):
+        return self.paths['model'] + 'stan_fit.pickle'
     
     # メソッド選択
     def select_method(self):
@@ -217,51 +224,53 @@ class Model:
                 plt.legend(loc='upper left', borderaxespad=0)
             ax.set_title(key)
             plt.show()
-
-# Stanコード
-# ローカルトレンド+時系変数モデル
-model_code =  """
-data {
-  int       T;         // データ取得期間の長さ
-  vector[T] len;       // イベント期間(h)
-  vector[T] y;         // 観測値
-  int       pred_term; // 予測期間の長さ
-  vector[pred_term] pred_len; // 予測イベントのイベント期間(h)
-}
-parameters {
-  vector[T]     b_len; // lenの係数
-  vector[T]     mu;    // 水準成分の推定値
-  real<lower=0> s_t;   // ev_lenの係数の変化を表す標準偏差
-  real<lower=0> s_w;   // 水準成分の変動の大きさを表す標準偏差
-  real<lower=0> s_v;   // 観測誤差の標準偏差
-}
-transformed parameters {
-  vector[T] alpha;
-  for(i in 1:T){
-    alpha[i] = mu[i] + b_len[i] * len[i];
-  }
-}
-model {
-  for(i in 2:T){
-    mu[i] ~ normal(mu[i-1], s_w);
-    b_len[i] ~ normal(b_len[i-1], s_t);
-    y[i] ~ normal(alpha[i], s_v);
-  }
-}
-generated quantities{
-  vector[T + pred_term] mu_pred;
-  vector[T + pred_term] b_len_pred;   // lenの係数
-  vector[T + pred_term] alpha_pred;
-  mu_pred[1:T] = mu;
-  b_len_pred[1:T] = b_len;
-  alpha_pred[1:T] = alpha;
-  for(i in 1:pred_term){
-    mu_pred[T+i] = normal_rng(mu_pred[T+i-1], s_w);
-    b_len_pred[T+i] = normal_rng(b_len_pred[T+i-1], s_t);
-    alpha_pred[T+i] = mu_pred[T+i] + b_len_pred[T+i] * pred_len[i];
-  }
-}
-"""
+    
+    # Stanコード
+    # ローカルトレンド+時系変数モデル
+    @property
+    def model_code(self):
+        return """
+        data {
+          int       T;         // データ取得期間の長さ
+          vector[T] len;       // イベント期間(h)
+          vector[T] y;         // 観測値
+          int       pred_term; // 予測期間の長さ
+          vector[pred_term] pred_len; // 予測イベントのイベント期間(h)
+        }
+        parameters {
+          vector[T]     b_len; // lenの係数
+          vector[T]     mu;    // 水準成分の推定値
+          real<lower=0> s_t;   // ev_lenの係数の変化を表す標準偏差
+          real<lower=0> s_w;   // 水準成分の変動の大きさを表す標準偏差
+          real<lower=0> s_v;   // 観測誤差の標準偏差
+        }
+        transformed parameters {
+          vector[T] alpha;
+          for(i in 1:T){
+            alpha[i] = mu[i] + b_len[i] * len[i];
+          }
+        }
+        model {
+          for(i in 2:T){
+            mu[i] ~ normal(mu[i-1], s_w);
+            b_len[i] ~ normal(b_len[i-1], s_t);
+            y[i] ~ normal(alpha[i], s_v);
+          }
+        }
+        generated quantities{
+          vector[T + pred_term] mu_pred;
+          vector[T + pred_term] b_len_pred;   // lenの係数
+          vector[T + pred_term] alpha_pred;
+          mu_pred[1:T] = mu;
+          b_len_pred[1:T] = b_len;
+          alpha_pred[1:T] = alpha;
+          for(i in 1:pred_term){
+            mu_pred[T+i] = normal_rng(mu_pred[T+i-1], s_w);
+            b_len_pred[T+i] = normal_rng(b_len_pred[T+i-1], s_t);
+            alpha_pred[T+i] = mu_pred[T+i] + b_len_pred[T+i] * pred_len[i];
+          }
+        }
+        """
 
 if __name__ == '__main__':
     import config
