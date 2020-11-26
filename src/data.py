@@ -1,7 +1,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from src.utils import select_method, execute_dict_functions
+from src.selection import Selections, Selection
+from src.utils import execute_dict_functions
 from src.inputs import (input_yes_no, input_date, input_str, input_natural_number,
                     input_positive_number)
 
@@ -40,25 +41,25 @@ class Data:
     
     # 選択肢
     def select_method(self):
-        self.selection = {
-            '1': {
-                'name': 'データフレーム表示',
-                'method': self.show_dataframe,
-            },
-            '2': {
-                'name': 'グラフ表示',
-                'method': self.show_graph,
-            },
-            '3': {
-                'name': 'データ追加',
-                'method': self.add_data,
-            },
-            '4': {
-                'name': 'データ削除',
-                'method': self.delete_data,
-            },
-        }
-        select_method(self.selection)
+        selections = Selections([
+            Selection(
+                name = 'データフレーム表示',
+                method = self.show_dataframe,
+            ),
+            Selection(
+                name = 'グラフ表示',
+                method = self.show_graph,
+            ),
+            Selection(
+                name = 'データ追加',
+                method = self.add_data,
+            ),
+            Selection(
+                name = 'データ削除',
+                method = self.delete_data,
+            ),
+        ])
+        selections.select_method()
     
     # データフレーム表示
     def show_dataframe(self):

@@ -1,4 +1,4 @@
-from src.utils import select_method
+from src.selection import Selections, Selection
 from src.data import Data
 from src.model import Model
 
@@ -9,19 +9,19 @@ class App:
     
     # 選択肢
     def select_method(self):
-        selection = {
-            '1': {
-                'name': 'データの確認・追加・削除など',
-                'method': self.data.select_method,
-            },
-            '2': {
-                'name': '学習、予測',
-                'method': self.model.select_method,
-            },
-        }
-        # 選ぶ
-        select_method(selection)
+        selections = Selections([
+            Selection(
+                name = 'データの確認・追加・削除など',
+                method = self.data.select_method,
+            ),
+            Selection(
+                name = '学習、予測',
+                method = self.model.select_method,
+            ),
+        ])
+        selections.select_method()
 
 if __name__ == '__main__':
     from src import config
     app = App(config.file_info)
+    app.select_method()

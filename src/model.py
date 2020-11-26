@@ -6,7 +6,8 @@ from sklearn.metrics import r2_score
 import pystan
 
 from src.data import Data
-from src.utils import select_method, load_pickle, execute_dict_functions
+from src.selection import Selections, Selection
+from src.utils import load_pickle, execute_dict_functions
 from src.inputs import input_date, input_positive_number
 
 # 予測したいイベントデータのインプットに使う
@@ -58,23 +59,21 @@ class Model:
     
     # メソッド選択
     def select_method(self):
-        # 選択肢
-        self.selection = {
-            '1': {
-                'name': '学習&予測',
-                'method': self.learn_predict,
-            },
-            '2': {
-                'name': '前回予測時の学習結果表示',
-                'method': self.show_learning_result,
-            },
-            '3': {
-                'name': '前回予測時の推定値、グラフ表示',
-                'method': self.show_predict,
-            },
-        }
-        # 選ぶ
-        select_method(self.selection)
+        selections = Selections([
+            Selection(
+                name = '学習&予測',
+                method = self.learn_predict,
+            ),
+            Selection(
+                name = '前回予測時の学習結果表示',
+                method = self.show_learning_result,
+            ),
+            Selection(
+                name = '前回予測時の推定値、グラフ表示',
+                method = self.show_predict,
+            ),
+        ])
+        selections.select_method()
     
     # 学習&予測
     def learn_predict(self):
