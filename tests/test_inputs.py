@@ -5,59 +5,58 @@ path = os.path.join(os.path.dirname(__file__), '../src')
 sys.path.append(path)
 
 from inputs import (input_data, input_str, input_date, input_integer,
-                        input_natural_number, input_positive_number, convert_str_date,
-                        convert_str_natural_number, convert_str_positive_number, convert_str_y,
-                        loop_input, input_yes_no, is_date, is_natural_number,
-                        is_positive_number, 
-                        convert_str_integer, is_integer)
+                    input_natural_number, input_positive_number, convert_str_date,
+                    convert_str_natural_number, convert_str_positive_number, convert_str_y,
+                    loop_input, input_yes_no, is_date, is_natural_number,
+                    is_positive_number, convert_str_integer, is_integer)
 
 def test_input_data():
     with captured_stdin() as stdin:
-        stdin.write('q')
+        stdin.write('q\n')
         stdin.seek(0)
         assert input_data('') is None
     with captured_stdin() as stdin:
-        stdin.write('a')
+        stdin.write('a\n')
         stdin.seek(0)
         assert input_data('') == 'a'
 
 def test_input_str():
     with captured_stdin() as stdin:
-        stdin.write('a')
+        stdin.write('a\n')
         stdin.seek(0)
         assert input_str() == 'a'
 
 def test_input_date():
     with captured_stdin() as stdin:
-        stdin.write('2020-11-11')
+        stdin.write('2020-11-11\n')
         stdin.seek(0)
         assert input_date() == datetime.date(2020, 11, 11)
 
 def test_input_integer():
     with captured_stdin() as stdin:
-        stdin.write('10')
+        stdin.write('10\n')
         stdin.seek(0)
         assert input_integer() == 10
     with captured_stdin() as stdin:
-        stdin.write('0')
+        stdin.write('0\n')
         stdin.seek(0)
         assert input_integer() == 0
 
 def test_input_natural_number():
     with captured_stdin() as stdin:
-        stdin.write('10')
+        stdin.write('10\n')
         stdin.seek(0)
         assert input_natural_number() == 10
 
 def test_input_positive_number():
     with captured_stdin() as stdin:
-        stdin.write('10.5')
+        stdin.write('10.5\n')
         stdin.seek(0)
         assert input_positive_number() == 10.5
 
 def test_input_yes_no():
     with captured_stdin() as stdin:
-        stdin.write('Y')
+        stdin.write('Y\n')
         stdin.seek(0)
         assert input_yes_no() == True
 
