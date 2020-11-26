@@ -1,4 +1,8 @@
-from src.utils import select_method, execute_dict_functions, load_pickle
+import sys, os
+path = os.path.join(os.path.dirname(__file__), '../src')
+sys.path.append(path)
+
+from utils import select_method, execute_dict_functions, load_pickle
 
 def test_select_method():
     pass

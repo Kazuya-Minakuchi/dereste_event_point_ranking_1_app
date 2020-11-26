@@ -1,7 +1,10 @@
 from test.support import captured_stdin
 import datetime
+import sys, os
+path = os.path.join(os.path.dirname(__file__), '../src')
+sys.path.append(path)
 
-from src.inputs import (input_data, input_str, input_date, input_integer,
+from inputs import (input_data, input_str, input_date, input_integer,
                         input_natural_number, input_positive_number, convert_str_date,
                         convert_str_natural_number, convert_str_positive_number, convert_str_y,
                         loop_input, input_yes_no, is_date, is_natural_number,

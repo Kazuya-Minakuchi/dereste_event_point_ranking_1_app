@@ -1,7 +1,11 @@
 from test.support import captured_stdin
 
-from src.selection import Selections
-from src.selection import Selection
+import sys, os
+path = os.path.join(os.path.dirname(__file__), '../src')
+sys.path.append(path)
+
+from selection import Selections
+from selection import Selection
 
 """
 def test_selections():
