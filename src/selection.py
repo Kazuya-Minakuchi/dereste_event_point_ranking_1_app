@@ -5,7 +5,6 @@ from src.inputs import input_integer
 class Selections:
     def __init__(self, selection_list):
         self.selections = {i: selection for i, selection in enumerate(selection_list)}
-        print(self.selections)
     
     def select_method(self):
         while True:
