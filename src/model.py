@@ -41,7 +41,7 @@ class Model:
         # 予測値表示設定
         self.value_interval_estimations = [50, 90] # 信頼区間
         # 予測グラフ表示設定
-        self.plot_params = ['alpha_pred', 'mu_pred', 'b_len_pred'] # 表示項目
+        self.plot_params = ['alpha_pred', 'mu_pred', 'b_pred'] # 表示項目
         self.graph_interval_estimation = 90 # 信頼区間
         # データフレーム操作インスタンス
         self.data_frame = DataFrame(file_info)
@@ -266,15 +266,15 @@ class Model:
         }
         generated quantities{
           vector[T + pred_term] mu_pred;
-          vector[T + pred_term] b_len_pred;   // lenの係数
+          vector[T + pred_term] b_pred;   // lenの係数
           vector[T + pred_term] alpha_pred;
           mu_pred[1:T] = mu;
-          b_len_pred[1:T] = b_len;
+          b_pred[1:T] = b_len;
           alpha_pred[1:T] = alpha;
           for(i in 1:pred_term){
             mu_pred[T+i] = normal_rng(mu_pred[T+i-1], s_w);
-            b_len_pred[T+i] = normal_rng(b_len_pred[T+i-1], s_t);
-            alpha_pred[T+i] = mu_pred[T+i] + b_len_pred[T+i] * pred_len[i];
+            b_pred[T+i] = normal_rng(b_pred[T+i-1], s_t);
+            alpha_pred[T+i] = mu_pred[T+i] + b_pred[T+i] * pred_len[i];
           }
         }
         """
