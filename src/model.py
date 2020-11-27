@@ -90,7 +90,10 @@ class Model:
         if next_event is None:
             return
         df = self.data_frame.get_dataframe()
+        # 学習,保存,結果表示
         self.learning(next_event, df)
+        self.update_fit_data()
+        self.update_learned_data(df, next_event)
         self.show_learning_result()
         self.show_predict()
     
@@ -139,10 +142,14 @@ class Model:
                 algorithm="NUTS",
                 verbose=False)
         print('学習完了')
-        # ファイル保存
+    
+    # 学習結果ファイルを保存
+    def update_fit_data(self):
         with open(self.path_stan_fit, mode="wb") as f:
             pickle.dump(self.fit, f)
-        # 学習したときのデータを保存
+    
+    # 学習したときのデータを保存
+    def update_learned_data(self, df, next_event):
         self.learned_data = {
             'df': df,
             'next_event': next_event,
