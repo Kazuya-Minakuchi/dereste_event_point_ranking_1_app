@@ -17,7 +17,7 @@ def input_event_data():
     }
     return execute_dict_functions(in_dict)
 
-# データを管理するクラス
+# データフレームを管理するクラス
 class DataFrame:
     def __init__(self, file_info):
         # グラフ表示設定
@@ -39,8 +39,8 @@ class DataFrame:
         df.set_index('date', inplace=True)
         return df
     
-    # データ保存
-    def save_dataframe(self):
+    # データ更新
+    def update_dataframe(self):
         self.df.to_csv(self.path_dataframe)
     
     # 選択肢
@@ -86,7 +86,7 @@ class DataFrame:
         df_add = pd.DataFrame(data_dict, index=['0']).set_index('date')
         # 既存のデータフレームに追加
         self.df = pd.concat([self.df, df_add], axis=0).sort_index()
-        self.save_dataframe()
+        self.update_dataframe()
     
     # データ削除
     def delete_data(self):
@@ -109,7 +109,7 @@ class DataFrame:
             # 削除
             self.df.drop(index=date, inplace=True)
             # 保存
-            self.save_dataframe()
+            self.update_dataframe()
             print('削除しました')
         else:
             print('キャンセルします')
