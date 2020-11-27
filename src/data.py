@@ -18,7 +18,7 @@ def input_event_data():
     return execute_dict_functions(in_dict)
 
 # データを管理するクラス
-class Data:
+class DataFrame:
     def __init__(self, file_info):
         # グラフ表示設定
         self.plot_params = ['point', 'length(h)'] # 表示項目
@@ -120,5 +120,5 @@ class Data:
 
 if __name__ == '__main__':
     import config
-    data = Data(config.file_info)
-    data.select_method()
+    data_frame = DataFrame(config.file_info)
+    data_frame.select_method()
