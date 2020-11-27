@@ -27,7 +27,7 @@ class Selections:
     def execute_method(self, num):
         # 正しい値が入力されていたら、実行
         try:
-            self.selections[num].method()
+            self.selections[num].execute_method()
         # 値が間違っていたらやりなおし
         except KeyError:
             print('正しい数字を入力してください')
@@ -36,6 +36,9 @@ class Selections:
 class Selection:
     name:   str
     method: Any
+    
+    def execute_method(self):
+        self.method()
 
 if __name__ == '__main__':
     selections = Selections([
