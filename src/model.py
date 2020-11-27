@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import r2_score
 import pystan
 
-from data import Data
+from data import DataFrame
 from selection import Selections, Selection
 from utils import load_pickle, execute_dict_functions
 from inputs import input_date, input_positive_number
@@ -44,7 +44,7 @@ class Model:
         self.plot_params = ['alpha_pred', 'mu_pred', 'b_len_pred'] # 表示項目
         self.graph_interval_estimation = 90 # 信頼区間
         # データフレーム操作インスタンス
-        self.data = Data(file_info)
+        self.data_frame = DataFrame(file_info)
         # 読み込みファイルのパス
         self.paths = file_info['paths']
         # ファイル読み込み
@@ -54,7 +54,7 @@ class Model:
     
     @property
     def path_learned_data(self):
-        return self.paths['data']  + 'stan_learned_data.pickle'
+        return self.paths['data'] + 'stan_learned_data.pickle'
     
     @property
     def path_stan_model(self):
@@ -89,7 +89,7 @@ class Model:
         next_event = input_predict_event_data()
         if next_event is None:
             return
-        df = self.data.get_dataframe()
+        df = self.data_frame.get_dataframe()
         self.learning(next_event, df)
         self.show_learning_result()
         self.show_predict()

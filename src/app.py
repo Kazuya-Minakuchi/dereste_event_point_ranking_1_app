@@ -1,10 +1,10 @@
 from selection import Selections, Selection
-from data import Data
+from data import DataFrame
 from model import Model
 
 class App:
     def __init__(self, file_info):
-        self.data = Data(file_info)
+        self.data_frame = DataFrame(file_info)
         self.model = Model(file_info)
     
     # 選択肢
@@ -12,7 +12,7 @@ class App:
         selections = Selections([
             Selection(
                 name = 'データの確認・追加・削除など',
-                method = self.data.select_method,
+                method = self.data_frame.select_method,
             ),
             Selection(
                 name = '学習、予測',
