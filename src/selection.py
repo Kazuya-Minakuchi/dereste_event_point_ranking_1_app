@@ -4,7 +4,7 @@ from inputs import input_integer
 
 class Selections:
     def __init__(self, selection_list):
-        self.selections = {i: selection for i, selection in enumerate(selection_list)}
+        self.selections = {i+1: selection for i, selection in enumerate(selection_list)}
     
     # 実行するメソッド選ぶ
     def select_method(self):
@@ -20,8 +20,8 @@ class Selections:
     # 選択肢表示
     def show_selection(self):
         print('モードを選んでください')
-        for i, selection in self.selections.items():
-            print(i, ':', selection.name)
+        for key, selection in self.selections.items():
+            print(key, ':', selection.name)
     
     # 入力された番号のメソッドを実行
     def execute_method(self, num):
