@@ -1,11 +1,11 @@
 from test.support import captured_stdin
 
 import sys, os
-path = os.path.join(os.path.dirname(__file__), '../src')
+path = os.path.join(os.path.dirname(__file__), '../src/app')
 sys.path.append(path)
 
-from selection import Selections
-from selection import Selection
+from app.selection import Selections
+from app.selection import Selection
 
 """
 def test_selections():
@@ -19,7 +19,6 @@ def test_selections():
             method = (lambda: 'tes2'),
         ),
     ])
-    
     with captured_stdin() as stdin:
         stdin.write('0')
         stdin.seek(0)

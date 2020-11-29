@@ -7,7 +7,7 @@ def execute_dict_functions(in_dict):
     key:      返すdictのkey
     function: 値（返すdictのvalue)を得る関数
     """
-    # カラムごとに取得し、辞書型で返す
+    # keyごとに取得し、辞書型で返す
     out_dict = {}
     for key, function in in_dict.items():
         print(key, '入力')
