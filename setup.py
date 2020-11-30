@@ -10,8 +10,8 @@ setup(
     
     author='kazuya.minakuchi',
     author_email='mnkckzy@gmail.com',
-    url='None.com',
-
+    url='http://github.com/kzy611/dereste_event_point_ranking_1_app',
+    
     packages=find_packages(where='src'),
     package_dir={'': 'src'},
     setup_requires=["pytest-runner"],
