@@ -4,8 +4,8 @@ import sys, os
 path = os.path.join(os.path.dirname(__file__), '../src/app')
 sys.path.append(path)
 
-from app.selection import Selections
-from app.selection import Selection
+from selection import Selections
+from selection import Selection
 
 """
 def test_selections():
